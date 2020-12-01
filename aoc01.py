@@ -12,35 +12,43 @@ def get_input(filename):
         lines = f.readlines()
     return [int(n) for n in lines]
 
+def find_sum_eq(data, target, num):
+    if num == 0:
+        if target == 0:
+            return []
+        else:
+            return False
+
+    for n in data:
+        r = find_sum_eq(data, target - n, num - 1)
+        if r is False:
+            continue
+        else:
+            r.append(n)
+            return r
+    return False
+
+def list_mult(data):
+    r = 1
+    for n in data:
+        r *= n
+    return r
+
 def test1(data):
-    for first in data:
-        for second in data:
-            if first + second == 2020:
-                return first * second
-    return 0
+    r = find_sum_eq(data, 2020, 2)
+    return list_mult(r)
 
 def test2(data):
-    for first in data:
-        for second in data:
-            for third in data:
-                if first + second + third == 2020:
-                    return first * second * third
-    return 0
+    r = find_sum_eq(data, 2020, 3)
+    return list_mult(r)
 
 def part1(data):
-    for first in data:
-        for second in data:
-            if first + second == 2020:
-                return first * second
-    return None
+    r = find_sum_eq(data, 2020, 2)
+    return list_mult(r)
 
 def part2(data):
-    for first in data:
-        for second in data:
-            for third in data:
-                if first + second + third == 2020:
-                    return first * second * third
-    return None
+    r = find_sum_eq(data, 2020, 3)
+    return list_mult(r)
 
 if __name__ == '__main__':
 

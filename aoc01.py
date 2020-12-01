@@ -13,20 +13,24 @@ def get_input(filename):
     return [int(n) for n in lines]
 
 def find_sum_eq(data, target, num):
+
+    if target < 0:
+        return None
+
     if num == 0:
         if target == 0:
             return []
         else:
-            return False
+            return None
 
-    for n in data:
-        r = find_sum_eq(data, target - n, num - 1)
-        if r is False:
+    for index, n in enumerate(data):
+        r = find_sum_eq(data[index + 1:], target - n, num - 1)
+        if r is None:
             continue
         else:
             r.append(n)
             return r
-    return False
+    return None
 
 def list_mult(data):
     r = 1

@@ -10,15 +10,23 @@ SOLVED_2 = False
 def get_input(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
-    return lines
+    return [int(n) for n in lines]
 
 def test1(data):
+    for first in data:
+        for second in data:
+            if first + second == 2020:
+                return first * second
     return 0
 
 def test2(data):
     return 0
 
 def part1(data):
+    for first in data:
+        for second in data:
+            if first + second == 2020:
+                return first * second
     return None
 
 def part2(data):
@@ -26,9 +34,9 @@ def part2(data):
 
 if __name__ == '__main__':
 
-    test_input_1 = [1,2,3]
+    test_input_1 = [1721, 979, 366, 299, 675, 1456]
     print('Test Part 1:')
-    test_eq('Test 1.1', test1, 42, test_input_1)
+    test_eq('Test 1.1', test1, 514579, test_input_1)
     print()
 
     test_input_2 = [4,5,6]

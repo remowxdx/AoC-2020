@@ -4,8 +4,8 @@ from aoc import *
 
 pd = Debug(True)
 DAY = 1
-SOLVED_1 = False
-SOLVED_2 = False
+SOLVED_1 = True
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -20,6 +20,11 @@ def test1(data):
     return 0
 
 def test2(data):
+    for first in data:
+        for second in data:
+            for third in data:
+                if first + second + third == 2020:
+                    return first * second * third
     return 0
 
 def part1(data):
@@ -30,6 +35,11 @@ def part1(data):
     return None
 
 def part2(data):
+    for first in data:
+        for second in data:
+            for third in data:
+                if first + second + third == 2020:
+                    return first * second * third
     return None
 
 if __name__ == '__main__':
@@ -39,9 +49,9 @@ if __name__ == '__main__':
     test_eq('Test 1.1', test1, 514579, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
+    test_input_2 = test_input_1
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 241861950, test_input_2)
     print()
 
     data = get_input(f'input{DAY}')

@@ -1,8 +1,8 @@
 # Advent of Code 2020
 
-These are my attempts to solve the Advent of Code 2020.
+These are my attempts to solve the [Advent of Code 2020](https://adventofcode.com/2020).
 
-## Day 1
+## [Day 1](https://adventofcode.com/2020/day/1)
 
 OK, day 1 has been easy, 7 minutes to do part 1 and other 4 to do part 2.
 
@@ -68,3 +68,25 @@ for index, n in enumerate(data):
 
 And to speed up still more we could sort then numbers before looping
 adn stop the recursion once we get over 2020 (or below 0).
+
+## [Day 2](https://adventofcode.com/2020/day/2)
+
+This problem took me longer that it should have: 24 minutes for part 1 and
+other 28 minutes for part 2.
+The problem was easy to solve, but I made some mistakes in the parsing
+of the strings... and reading the wording of the problem:
+
+- it took me too much time to parse the policy part of the input
+- I didn't realized that I left a space at the start of the password, thus
+changing the indexing of the position of the letters.
+- I didn't read the *"exactly one of these positions"* although it was emphasized.
+
+My first solution is straightforward: simply split the lines of the input
+to get the policy and the password (without the starting space!).
+
+Then divide the policy to get the numbers and the letter.
+For the Part 1, simply count how many times the letter appears in the password,
+check if this number is not outside the policy range.
+For Part 2 (the **real** policy!) just count the times the letter appears
+in the first or second position, and return valid if it is *exactly* one.
+

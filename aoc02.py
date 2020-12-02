@@ -12,12 +12,8 @@ def get_input(filename):
         lines = f.readlines()
     return lines
 
-def process_input(raw_data):
-    r = []
-    for line in raw_data:
-        policy, password = line.strip().split(': ')
-        r.append((password, policy))
-    return r
+def extract_policy_and_password(line):
+    return line.strip().split(': ')
 
 def check_password(policy, password):
     repetitions, letter = policy.split(' ')
@@ -27,8 +23,8 @@ def check_password(policy, password):
         if l == letter:
             letter_count += 1
     if letter_count < int(min_rep) or letter_count > int(max_rep):
-        return False
-    return True
+        return 0
+    return 1
 
 def real_check_password(policy, password):
     positions, letter = policy.split(' ')
@@ -39,42 +35,27 @@ def real_check_password(policy, password):
     if password[int(second_pos) - 1] == letter:
         c += 1
     if c == 1:
-        return True
-    return False
-
-def count_valid_passwords(data):
-    c = 0
-    for password, policy in data:
-        if check_password(policy, password):
-            c += 1
-    return c
-
-def real_count_valid_passwords(data):
-    c = 0
-    for password, policy in data:
-        if real_check_password(policy, password):
-            c += 1
-    return c
+        return 1
+    return 0
 
 def test1(data):
-    return count_valid_passwords(data)
+    return sum([check_password(*extract_policy_and_password(line)) for line in data])
 
 def test2(data):
-    return real_count_valid_passwords(data)
+    return sum([real_check_password(*extract_policy_and_password(line)) for line in data])
 
 def part1(data):
-    return count_valid_passwords(data)
+    return sum([check_password(*extract_policy_and_password(line)) for line in data])
 
 def part2(data):
-    return real_count_valid_passwords(data)
+    return sum([real_check_password(*extract_policy_and_password(line)) for line in data])
 
 if __name__ == '__main__':
 
-    raw_test_input = '''1-3 a: abcde
+    test_input_1 = '''1-3 a: abcde
 1-3 b: cdefg
 2-9 c: ccccccccc
 '''.splitlines()
-    test_input_1 = process_input(raw_test_input)
     print('Test Part 1:')
     test_eq('Test 1.1', test1, 2, test_input_1)
     print()
@@ -84,8 +65,7 @@ if __name__ == '__main__':
     test_eq('Test 2.1', test2, 1, test_input_2)
     print()
 
-    raw_data = get_input(f'input{DAY}')
-    data = process_input(raw_data)
+    data = get_input(f'input{DAY}')
 
     r = part1(data)
     if r is not None:

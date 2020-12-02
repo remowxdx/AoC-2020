@@ -90,3 +90,8 @@ check if this number is not outside the policy range.
 For Part 2 (the **real** policy!) just count the times the letter appears
 in the first or second position, and return valid if it is *exactly* one.
 
+After finding the right solutions, I refactored a little the algorithm:
+now the check_password functions return a **1** or **0** instead of
+**True** or **False**, so that I can create a list of **1**s and **0**s
+and then just take the sum of the numbers in the list.
+

@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 2
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -15,7 +15,7 @@ def get_input(filename):
 def process_input(raw_data):
     r = []
     for line in raw_data:
-        policy, password = line.strip().split(':')
+        policy, password = line.strip().split(': ')
         r.append((password, policy))
     return r
 
@@ -30,6 +30,18 @@ def check_password(policy, password):
         return False
     return True
 
+def real_check_password(policy, password):
+    positions, letter = policy.split(' ')
+    first_pos, second_pos = positions.split('-')
+    c = 0
+    if password[int(first_pos) - 1] == letter:
+        c += 1
+    if password[int(second_pos) - 1] == letter:
+        c += 1
+    if c == 1:
+        return True
+    return False
+
 def count_valid_passwords(data):
     c = 0
     for password, policy in data:
@@ -37,17 +49,24 @@ def count_valid_passwords(data):
             c += 1
     return c
 
+def real_count_valid_passwords(data):
+    c = 0
+    for password, policy in data:
+        if real_check_password(policy, password):
+            c += 1
+    return c
+
 def test1(data):
     return count_valid_passwords(data)
 
 def test2(data):
-    return 0
+    return real_count_valid_passwords(data)
 
 def part1(data):
     return count_valid_passwords(data)
 
 def part2(data):
-    return None
+    return real_count_valid_passwords(data)
 
 if __name__ == '__main__':
 
@@ -60,9 +79,9 @@ if __name__ == '__main__':
     test_eq('Test 1.1', test1, 2, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
+    test_input_2 = test_input_1
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 1, test_input_2)
     print()
 
     raw_data = get_input(f'input{DAY}')

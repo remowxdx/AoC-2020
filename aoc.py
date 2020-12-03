@@ -90,8 +90,8 @@ SOLVED_2 = False
 
 def get_input(filename):
     with open(filename, 'r') as f:
-        lines = f.readlines()
-    return lines
+        lines = f.read()
+    return lines.splitlines()
 
 def test1(data):
     return 0

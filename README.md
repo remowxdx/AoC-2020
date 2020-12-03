@@ -108,6 +108,7 @@ I will edit the scaffolding code, because I think that this problem will
 show itself again.
 
 I think that nothing particular goes on here:
+
 - `dx` and `dy` in the function `count_trees` are resp. *right* and *down*
 - the repeating pattern is simulated by the modulo (`x % width`)
 

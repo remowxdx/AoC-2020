@@ -95,3 +95,22 @@ now the check_password functions return a **1** or **0** instead of
 **True** or **False**, so that I can create a list of **1**s and **0**s
 and then just take the sum of the numbers in the list.
 
+## [Day 3](https://adventofcode.com/2020/day/3)
+
+Ok, Part 1 took me 22 minutes, Part 2 5.
+Part 1 took longer because I thought that the *right* and *down* were
+variable so I didn't hard coded them.
+Also (and more time was sank here) my first solution was wrong and I did't
+understand why.
+After too much time I discovered that it was because I left the '\n'
+character at the end of each line reading the input from the file.
+I will edit the scaffolding code, because I think that this problem will
+show itself again.
+
+I think that nothing particular goes on here:
+- `dx` and `dy` in the function `count_trees` are resp. *right* and *down*
+- the repeating pattern is simulated by the modulo (`x % width`)
+
+In reality I expected that the second part wanted the slope with the minimum
+number of tree encountered.
+

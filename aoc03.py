@@ -15,36 +15,41 @@ def get_input(filename):
 def to_array(data):
     return data.splitlines()
     
-def count_trees(data, dx, dy):
-    c = 0
-    x = 0
-    y = 0
+def count_trees(data, slopes):
     width = len(data[0])
     height = len(data)
-    while y < height:
+    cs = [0] * len(slopes)
+    xs = [0] * len(slopes)
+    for y, line in enumerate(data):
         # print(x, y)
-        if data[y][x % width] == '#':
-            c += 1
-        x += dx
-        y += dy
-    return c
+        for index, slope in enumerate(slopes):
+            if y % slope[1] != 0:
+                continue
+            if data[y][xs[index] % width] == '#':
+                cs[index] += 1
+            xs[index] += slope[0]
+    return cs
 
 def test1(data):
-    return count_trees(data, 3, 1)
+    return count_trees(data, [(3, 1)])[0]
 
 def test2(data):
+    slopes = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
+    trees = count_trees(data, slopes)
     m = 1
-    for slope in [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]:
-        m *= count_trees(data, *slope)
+    for n in trees:
+        m *= n
     return m
 
 def part1(data):
-    return count_trees(data, 3, 1)
+    return count_trees(data, [(3, 1)])[0]
 
 def part2(data):
+    slopes = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
+    trees = count_trees(data, slopes)
     m = 1
-    for slope in [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]:
-        m *= count_trees(data, *slope)
+    for n in trees:
+        m *= n
     return m
 
 if __name__ == '__main__':

@@ -4,31 +4,60 @@ from aoc import *
 
 pd = Debug(True)
 DAY = 3
-SOLVED_1 = False
+SOLVED_1 = True
 SOLVED_2 = False
 
 def get_input(filename):
     with open(filename, 'r') as f:
-        lines = f.readlines()
-    return lines
+        lines = f.read()
+    return lines.splitlines()
+
+def to_array(data):
+    return data.splitlines()
+    
+def count_trees(data, dx, dy):
+    c = 0
+    x = 0
+    y = 0
+    width = len(data[0])
+    height = len(data)
+    while y < height:
+        # print(x, y)
+        if data[y][x % width] == '#':
+            c += 1
+        x += dx
+        y += dy
+    return c
 
 def test1(data):
-    return 0
+    return count_trees(data, 3, 1)
 
 def test2(data):
     return 0
 
 def part1(data):
-    return None
+    return count_trees(data, 3, 1)
 
 def part2(data):
     return None
 
 if __name__ == '__main__':
 
-    test_input_1 = [1,2,3]
+    test_input_raw = '''..##.......
+#...#...#..
+.#....#..#.
+..#.#...#.#
+.#...##..#.
+..#.##.....
+.#.#.#....#
+.#........#
+#.##...#...
+#...##....#
+.#..#...#.#
+'''
+    test_input_1 = to_array(test_input_raw)
     print('Test Part 1:')
-    test_eq('Test 1.1', test1, 42, test_input_1)
+    test_eq('Test 1.1', test1, 7, test_input_1)
     print()
 
     test_input_2 = [4,5,6]

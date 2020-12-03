@@ -115,3 +115,8 @@ I think that nothing particular goes on here:
 In reality I expected that the second part wanted the slope with the minimum
 number of tree encountered.
 
+After finding the solutions I didn't what to do to make something different.
+After some thinking I decided to make the function `count_trees` parallel.
+Also here nothing spectacular: now `count_trees` goes line by line updating
+the tree count for each slope. The counting is done only if
+`y % (down of slope)` is `0`.

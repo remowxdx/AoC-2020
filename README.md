@@ -100,7 +100,7 @@ and then just take the sum of the numbers in the list.
 Ok, Part 1 took me 22 minutes, Part 2 5.
 Part 1 took longer because I thought that the *right* and *down* were
 variable so I didn't hard coded them.
-Also (and more time was sank here) my first solution was wrong and I did't
+Also (and more time was sank here) my first solution was wrong and I didn't
 understand why.
 After too much time I discovered that it was because I left the '\n'
 character at the end of each line reading the input from the file.
@@ -120,3 +120,18 @@ After some thinking I decided to make the function `count_trees` parallel.
 Also here nothing spectacular: now `count_trees` goes line by line updating
 the tree count for each slope. The counting is done only if
 `y % (down of slope)` is `0`.
+
+## [Day 4](https://adventofcode.com/2020/day/4)
+
+Part 1 took 25 minutes, Part 2 32.
+This are the kind of problems which I like less: much parsing and many rules.
+The implementation straightforward: parse the passports in a list of
+dicts (Maps) and then check that they have "all" required fields for part 1.
+And also check that the field's values are valid for part 2.
+As always I had problems parsing the strings...
+
+For part 2 I decided to not use regular expression, so I worked with only
+standard string method.
+
+I think I will redo it, but using regular expressions.
+

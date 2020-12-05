@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 5
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -39,6 +39,22 @@ def part1(data):
     return highest
 
 def part2(data):
+    r = []
+    s = [False] * 128 * 8
+    for code in data:
+        id = seat_ID(code)
+        s[id] = True
+        r.append(id)
+
+    print(s)
+
+    started = False
+    for id, seat in enumerate(s):
+        if started == False and seat == True:
+            started = True
+        if started == True and seat == False:
+            return id
+
     return None
 
 if __name__ == '__main__':
@@ -50,7 +66,7 @@ if __name__ == '__main__':
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 0, test_input_2)
     print()
 
     data = get_input(f'input{DAY}')

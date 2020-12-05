@@ -2,7 +2,9 @@
 
 from aoc import *
 
-pd = Debug(True)
+import re
+
+pd = Debug(False)
 DAY = 4
 SOLVED_1 = True
 SOLVED_2 = True
@@ -65,66 +67,57 @@ def is_passport_really_valid(passport):
         if field not in passport:
             return False
         if not is_field_valid(field, passport[field]):
-            print(field, passport[field])
             return False
     return True
 
 def is_field_valid(field, value):
-    if field == 'byr':
-        if value.isdigit():
-            i = int(value)
-            if i >= 1920 and i <= 2002:
-                return True
+    required_fields = {
+        'byr': ('Birth Year', '^([0-9]{4})$', (1920, 2002)),
+        'iyr': ('Issue Year', '^([0-9]{4})$', (2010, 2020)),
+        'eyr': ('Expiration Year', '^([0-9]{4})$', (2020, 2030)),
+        'hgt': ('Height', '^(\d{2,3})(cm|in)$', (150, 193, 59, 76)),
+        'hcl': ('Hair Color', '^#([0-9a-f]{6})$', None),
+        'ecl': ('Eye Color', '^amb|blu|brn|gry|grn|hzl|oth$', None),
+        'pid': ('Passport ID', '^\d{9}$', None),
+        # 'cid': 'Country ID', Help self
+    }
+
+    m = re.match(required_fields[field][1], value)
+    if m is None:
+        # RegExp doesn't match
         return False
 
-    if field == 'iyr':
-        if value.isdigit():
-            i = int(value)
-            if i >= 2010 and i <= 2020:
-                return True
-        return False
+    if required_fields[field][2] is None:
+        # RegExp does match and no need to check range
+        return True
 
-    if field == 'eyr':
-        if value.isdigit():
-            i = int(value)
-            if i >= 2020 and i <= 2030:
-                return True
-        return False
-
-    if field == 'hgt':
-        if value.endswith('cm'):
-            height = value[:-2]
-            if height.isdigit():
-                i = int(height)
-                if i >= 150 and i <= 193:
-                    return True
-        if value.endswith('in'):
-            height = value[:-2]
-            i = int(height)
-            if i >= 59 and i <= 76:
-                return True
-        return False
-
-    if field == 'hcl':
-        if value.startswith('#') and len(value) == 7:
-            color = value[1:]
-            for l in color:
-                if l not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']:
-                    return False
+    if len(required_fields[field][2]) == 2:
+        # RegExp does match but we need to check the range
+        num = int(m[1])
+        if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
+            # Range is OK
             return True
+        # Range is not OK
         return False
 
-    if field == 'ecl':
-        if value in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']:
-            return True
+    if len(required_fields[field][2]) == 4:
+        # RegExp does match but we need to check on of 2 ranges
+        num = int(m[1])
+        if m[2] == 'cm':
+            # We have to check the range for "cm"
+            if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
+                # Range is OK
+                return True
+        if m[2] == 'in':
+            # We have to check the range for "in"
+            if num >= required_fields[field][2][2] and num <= required_fields[field][2][3]:
+                # Range is OK
+                return True
+        # Range is not OK
         return False
 
-    if field == 'pid':
-        if value.isdigit() and len(value) == 9:
-            return True
-        return False
-
-    raise Exception('Should never raise')
+    raise(f'Should never raise: {field} {m[0]}')
+    return False
 
 def test1(data):
     c = 0
@@ -143,7 +136,7 @@ def test2(data):
 def part1(data):
     c = 0
     for p in data:
-        print(p)
+        # print(p)
         if is_passport_valid(p):
             c += 1
     return c
@@ -151,8 +144,8 @@ def part1(data):
 def part2(data):
     c = 0
     for p in data:
-        # print(p)
         if is_passport_really_valid(p):
+            # print(p)
             c += 1
     return c
 

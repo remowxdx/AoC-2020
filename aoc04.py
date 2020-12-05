@@ -4,7 +4,7 @@ from aoc import *
 
 import re
 
-pd = Debug(True)
+pd = Debug(False)
 DAY = 4
 SOLVED_1 = True
 SOLVED_2 = True
@@ -72,47 +72,51 @@ def is_passport_really_valid(passport):
 
 def is_field_valid(field, value):
     required_fields = {
-        'byr': ('Birth Year', '([0-9]{4})', (1920, 2002)),
-        'iyr': ('Issue Year', '([0-9]{4})', (2010, 2020)),
-        'eyr': ('Expiration Year', '([0-9]{4})', (2020, 2030)),
-        'hgt': ('Height', '(\d{2,3})(cm|in)', (150, 193, 59, 76)),
-        'hcl': ('Hair Color', '#([0-9a-f]{6})', None),
-        'ecl': ('Eye Color', 'amb|blu|brn|gry|grn|hzl|oth', None),
-        'pid': ('Passport ID', '\d{9}', None),
+        'byr': ('Birth Year', '^([0-9]{4})$', (1920, 2002)),
+        'iyr': ('Issue Year', '^([0-9]{4})$', (2010, 2020)),
+        'eyr': ('Expiration Year', '^([0-9]{4})$', (2020, 2030)),
+        'hgt': ('Height', '^(\d{2,3})(cm|in)$', (150, 193, 59, 76)),
+        'hcl': ('Hair Color', '^#([0-9a-f]{6})$', None),
+        'ecl': ('Eye Color', '^amb|blu|brn|gry|grn|hzl|oth$', None),
+        'pid': ('Passport ID', '^\d{9}$', None),
         # 'cid': 'Country ID', Help self
     }
 
     m = re.match(required_fields[field][1], value)
     if m is None:
-        print('NoMatch: ', field, value)
+        # RegExp doesn't match
         return False
 
     if required_fields[field][2] is None:
-        print('MatchEasy: ', field, m[0])
+        # RegExp does match and no need to check range
         return True
 
     if len(required_fields[field][2]) == 2:
+        # RegExp does match but we need to check the range
         num = int(m[1])
         if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
-            print('MatchB: ', field, m[0])
+            # Range is OK
             return True
-        print('NoMatchB: ', field, m[0])
+        # Range is not OK
         return False
 
     if len(required_fields[field][2]) == 4:
+        # RegExp does match but we need to check on of 2 ranges
         num = int(m[1])
         if m[2] == 'cm':
+            # We have to check the range for "cm"
             if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
-                print('MatchCM: ', field, m[0])
+                # Range is OK
                 return True
         if m[2] == 'in':
-            if num >= required_fields[field][2][3] and num <= required_fields[field][2][3]:
-                print('MatchIN: ', field, m[0])
+            # We have to check the range for "in"
+            if num >= required_fields[field][2][2] and num <= required_fields[field][2][3]:
+                # Range is OK
                 return True
-        print('NoMatchH: ', field, m[0])
+        # Range is not OK
         return False
 
-    print('NoMatch!: ', field, m[0])
+    raise(f'Should never raise: {field} {m[0]}')
     return False
 
 def test1(data):
@@ -140,8 +144,8 @@ def part1(data):
 def part2(data):
     c = 0
     for p in data:
-        print('-'*20)
         if is_passport_really_valid(p):
+            # print(p)
             c += 1
     return c
 

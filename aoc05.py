@@ -39,12 +39,12 @@ def part1(data):
     return highest
 
 def part2(data):
-    r = []
+    # r = []
     s = [False] * 128 * 8
     for code in data:
         id = seat_ID(code)
         s[id] = True
-        r.append(id)
+        # r.append(id)
 
     print(s)
 

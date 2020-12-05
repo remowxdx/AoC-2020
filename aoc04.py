@@ -14,22 +14,78 @@ def get_input(filename):
         lines = f.read()
     return lines.splitlines()
 
-def to_list(data):
+class PassportInvalid(Exception):
+    pass
+
+class PassportFieldMissing(PassportInvalid):
+    def __init__(self, passport, field):
+        self.passport = passport
+        self.field = field
+
+    def __str__(self):
+        return f'Passport invalid because missing field "{self.field}".'
+
+
+class PassportFieldFormatIvalid(PassportInvalid):
+    def __init__(self, passport, field, value):
+        self.passport = passport
+        self.field = field
+        self.value = value
+
+    def __str__(self):
+        return f'Passport invalid because the format of field "{self.field}" is not valid. {self.field} is "{self.value}".'
+
+class PassportFieldValueOutOfRange(PassportInvalid):
+    def __init__(self, passport, field, value, min_value, max_value):
+        self.passport = passport
+        self.field = field
+        self.value = value
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def __str__(self):
+        return f'Passport invalid because "{self.field}" is out of range. "{self.field}" is "{self.value}" but should be between "{self.min_value}" and "{self.max_value}".'
+
+def get_passports(data, validate_passport):
+
+    required_fields = {
+        'byr': 'Birth Year',
+        'iyr': 'Issue Year',
+        'eyr': 'Expiration Year',
+        'hgt': 'Height',
+        'hcl': 'Hair Color',
+        'ecl': 'Eye Color',
+        'pid': 'Passport ID',
+        # 'cid': 'Country ID', Help self
+    }
+
     passports = []
     current_passport = {}
     # print(data)
     for line in data:
         if line.strip() == '':
+            try:
+                validate_passport(current_passport)
+                current_passport['valid'] = True
+            except PassportInvalid as r:
+                current_passport['valid'] = False
+                current_passport['reason'] = str(r)
             passports.append(current_passport)
             current_passport = {}
         # print(line)
         for field in line.split():
             field, value = field.split(':')
             current_passport[field] = value
+    try:
+        validate_passport(current_passport)
+        current_passport['valid'] = True
+    except PassportInvalid as r:
+        current_passport['valid'] = False
+        current_passport['reason'] = str(r)
     passports.append(current_passport)
     return passports
 
-def is_passport_valid(passport):
+def validate_passport(passport):
     
     required_fields = {
         'byr': 'Birth Year',
@@ -45,11 +101,9 @@ def is_passport_valid(passport):
     for field in required_fields:
         # print(field)
         if field not in passport:
-            return False
-
-    return True
+            raise PassportFieldMissing(passport, field)
     
-def is_passport_really_valid(passport):
+def real_validate_passport(passport):
     
     required_fields = {
         'byr': 'Birth Year',
@@ -65,12 +119,10 @@ def is_passport_really_valid(passport):
     for field in required_fields:
         # print(field)
         if field not in passport:
-            return False
-        if not is_field_valid(field, passport[field]):
-            return False
-    return True
+            raise PassportFieldMissing(passport, field)
+        validate_field(passport, field)
 
-def is_field_valid(field, value):
+def validate_field(passport, field):
     required_fields = {
         'byr': ('Birth Year', '^([0-9]{4})$', (1920, 2002)),
         'iyr': ('Issue Year', '^([0-9]{4})$', (2010, 2020)),
@@ -82,70 +134,72 @@ def is_field_valid(field, value):
         # 'cid': 'Country ID', Help self
     }
 
+    value = passport[field]
+
     m = re.match(required_fields[field][1], value)
     if m is None:
         # RegExp doesn't match
-        return False
+        raise PassportFieldFormatIvalid(passport, field, value)
 
-    if required_fields[field][2] is None:
-        # RegExp does match and no need to check range
-        return True
+    else:
+        if required_fields[field][2] is None:
+            pass
+        else:
+            if len(required_fields[field][2]) == 2:
+                # RegExp does match but we need to check the range
+                num = int(m[1])
+                if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
+                    # Range is OK
+                    pass
+                else:
+                    # Range is not OK
+                    raise PassportFieldValueOutOfRange(passport, field, value, required_fields[field][2][0], required_fields[field][2][1])
 
-    if len(required_fields[field][2]) == 2:
-        # RegExp does match but we need to check the range
-        num = int(m[1])
-        if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
-            # Range is OK
-            return True
-        # Range is not OK
-        return False
-
-    if len(required_fields[field][2]) == 4:
-        # RegExp does match but we need to check on of 2 ranges
-        num = int(m[1])
-        if m[2] == 'cm':
-            # We have to check the range for "cm"
-            if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
-                # Range is OK
-                return True
-        if m[2] == 'in':
-            # We have to check the range for "in"
-            if num >= required_fields[field][2][2] and num <= required_fields[field][2][3]:
-                # Range is OK
-                return True
-        # Range is not OK
-        return False
-
-    raise(f'Should never raise: {field} {m[0]}')
-    return False
+            elif len(required_fields[field][2]) == 4:
+                # RegExp does match but we need to check on of 2 ranges
+                num = int(m[1])
+                if m[2] == 'cm':
+                    # We have to check the range for "cm"
+                    if num >= required_fields[field][2][0] and num <= required_fields[field][2][1]:
+                        # Range is OK
+                        pass
+                    else:
+                        # Range is not OK
+                        raise PassportFieldValueOutOfRange(passport, field, value, required_fields[field][2][0], required_fields[field][2][1])
+                elif m[2] == 'in':
+                    # We have to check the range for "in"
+                    if num >= required_fields[field][2][2] and num <= required_fields[field][2][3]:
+                        # Range is OK
+                        pass
+                    else:
+                        # Range is not OK
+                        raise PassportFieldValueOutOfRange(passport, field, value, required_fields[field][2][2], required_fields[field][2][3])
 
 def test1(data):
     c = 0
     for p in data:
-        if is_passport_valid(p):
+        if p['valid']:
             c += 1
     return c
 
 def test2(data):
     c = 0
     for p in data:
-        if is_passport_really_valid(p):
+        if p['valid']:
             c += 1
     return c
 
 def part1(data):
     c = 0
     for p in data:
-        # print(p)
-        if is_passport_valid(p):
+        if p['valid']:
             c += 1
     return c
 
 def part2(data):
     c = 0
     for p in data:
-        if is_passport_really_valid(p):
-            # print(p)
+        if p['valid']:
             c += 1
     return c
 
@@ -165,7 +219,7 @@ hgt:179cm
 hcl:#cfa07d eyr:2025 pid:166559648
 iyr:2011 ecl:brn hgt:59in
 '''
-    test_input_1 = to_list(test_input_raw.splitlines())
+    test_input_1 = get_passports(test_input_raw.splitlines(), validate_passport)
     print('Test Part 1:')
     test_eq('Test 1.1', test1, 2, test_input_1)
     print()
@@ -198,13 +252,13 @@ eyr:2022
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
 '''
 
-    test_input_2 = to_list(test_input_raw.splitlines())
+    test_input_2 = get_passports(test_input_raw.splitlines(), real_validate_passport)
     print('Test Part 2:')
     test_eq('Test 2.1', test2, 4, test_input_2)
     print()
 
     data_raw = get_input(f'input{DAY}')
-    data = to_list(data_raw)
+    data = get_passports(data_raw, validate_passport)
 
     r = part1(data)
     if r is not None:
@@ -214,6 +268,8 @@ iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719
         else:
             save_solution(DAY, 1, r)
 
+    data = get_passports(data_raw, real_validate_passport)
+    print(data)
     r = part2(data)
     if r is not None:
         print('Part 2:', r)

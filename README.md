@@ -139,7 +139,12 @@ I created dict with the field as index, and a tuple with the regular
 expression and the limits of the values.
 Looking at it, I don't know which method I like more...
 
-If I find the time and the will, I'll try to do it using exceptions.
+My third attempt is using exceptions to validate passwords:
+instead of returning `True` or `False` the functions validating
+the passports raise Exceptions. I also changed where the validation
+happens: now the validation is done during the parsing of the passports.
+When there is an exception, we add the passport with a field 'valid',
+that is then checked and counted.
 
 ## [Day 5](https://adventofcode.com/2020/day/5)
 

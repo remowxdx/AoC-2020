@@ -133,7 +133,13 @@ As always I had problems parsing the strings...
 For part 2 I decided to not use regular expression, so I worked with only
 standard string method.
 
-I think I will redo it, but using regular expressions.
+After finding the solution, I changed the function to check the validity
+of the field to use regular expressions. 
+I created dict with the field as index, and a tuple with the regular
+expression and the limits of the values.
+Looking at it, I don't know which method I like more...
+
+If I find the time and the will, I'll try to do it using exceptions.
 
 ## [Day 5](https://adventofcode.com/2020/day/5)
 

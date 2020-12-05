@@ -4,7 +4,7 @@ from aoc import *
 
 pd = Debug(True)
 DAY = 5
-SOLVED_1 = False
+SOLVED_1 = True
 SOLVED_2 = False
 
 def get_input(filename):
@@ -12,23 +12,40 @@ def get_input(filename):
         lines = f.read()
     return lines.splitlines()
 
+
+def seat_ID(code):
+    id = 0
+    for c in code:
+        id *= 2
+        if c == 'B' or c =='R':
+            id += 1
+    return id
+
 def test1(data):
-    return 0
+    r = []
+    for code in data:
+        r.append(seat_ID(code))
+    return r
 
 def test2(data):
     return 0
 
 def part1(data):
-    return None
+    highest = 0
+    for code in data:
+        id = seat_ID(code)
+        if id > highest :
+            highest = id
+    return highest
 
 def part2(data):
     return None
 
 if __name__ == '__main__':
 
-    test_input_1 = [1,2,3]
+    test_input_1 = ['BFFFBBFRRR', 'FFFBBBFRRR', 'BBFFBBFRLL']
     print('Test Part 1:')
-    test_eq('Test 1.1', test1, 42, test_input_1)
+    test_eq('Test 1.1', test1, [567, 119, 820], test_input_1)
     print()
 
     test_input_2 = [4,5,6]

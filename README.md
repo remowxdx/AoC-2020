@@ -135,3 +135,51 @@ standard string method.
 
 I think I will redo it, but using regular expressions.
 
+## [Day 5](https://adventofcode.com/2020/day/5)
+
+Good, 12 minutes for part 1 and 9 for part 2.
+
+Contrary to the yesterday's problem, I liked this one.
+
+What I immediately realized, was that "F", "B", "R", "L" are only another
+way to write the seat number in binary: "F" means `0`, "B" means `1`, "L"
+means `0` and "R" means `1`.
+
+So the problem is *really* easy to solve: just transform the binary
+number in base 10 and you have your seat ID.
+
+```
+# Gives the seat ID, given the code on the boarding pass
+def seat_ID(code):
+    id = 0
+    for c in code:
+        id *= 2 # Advance to the next exponent
+        # If character in code correspond to a 1, just add one
+        if c == 'B' or c =='R':
+            id += 1
+        # If character in code correspond to a 0, do nothing
+    return id
+```
+
+Then you just have to find the maximum in your
+boarding passes list.
+
+For Part 2 I created an array of seats starting with `False` for
+the free seats, then filled with `True` for every boarding pass.
+Then I saw that in the middle of the seat list, there was only one free
+seat, so I followed the array to find the first occupied seat and
+then to the first with a free seat.
+
+```
+started = False  # In the front of the plane all seats are free
+for id, seat in enumerate(s):
+    if started == False and seat == True:
+        # Here we found the first occupied seat
+        started = True
+    if started == True and seat == False:
+        # Here we found the first free seat after the free on the front
+        return id
+
+```
+Initally I created an array with all the seat IDs, but didn't use that.
+

@@ -194,3 +194,20 @@ for id, seat in enumerate(s):
 ```
 Initally I created an array with all the seat IDs, but didn't use that.
 
+## [Day 6](https://adventofcode.com/2020/day/6)
+
+Today it took me 15 minutes to do Part 1 and 11 for Part 2.
+
+For Part 1 I created an array with all the answer not already answered by
+people in the same group.
+The method is similar to what I did in Day 4 with the passports.
+Then I summed the length of the answers of each group.
+
+For Part 2, I followed the same spirit as Part 1, but I created an
+array of 26 `True` values, one for each letter, then for each person
+I set the array to `False` for each letter that was not `yes`.
+That gives an array with a `True` only for the letters that have
+been answered by all people in the group.
+
+Finally I counted the `True`s in th entire array of groups.
+

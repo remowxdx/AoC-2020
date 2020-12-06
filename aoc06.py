@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 6
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -15,18 +15,35 @@ def get_input(filename):
 def to_list(data):
     groups = []
     current_group = []
-    print(data)
+    # print(data)
     for line in data:
         if line.strip() == '':
             groups.append(current_group)
             current_group = []
             continue
-        print(line)
+        # print(line)
         for c in line.strip():
             if c not in current_group:
                 current_group.append(c)
     groups.append(current_group)
-    print(groups)
+    # print(groups)
+    return groups
+
+def to_list_2(data):
+    groups = []
+    current_group = [True] * 26
+    # print(data)
+    for line in data:
+        if line.strip() == '':
+            groups.append(current_group)
+            current_group = [True] * 26
+            continue
+        # print(line)
+        for c in range(26):
+            if chr(c + ord('a')) not in line:
+                current_group[c] = False
+    groups.append(current_group)
+    # print(groups)
     return groups
 
 def test1(data):
@@ -36,7 +53,12 @@ def test1(data):
     return s
 
 def test2(data):
-    return 0
+    s = 0
+    for group in data:
+        for answer in group:
+            if answer:
+                s += 1
+    return s
 
 def part1(data):
     s = 0
@@ -45,7 +67,12 @@ def part1(data):
     return s
 
 def part2(data):
-    return None
+    s = 0
+    for group in data:
+        for answer in group:
+            if answer:
+                s += 1
+    return s
 
 if __name__ == '__main__':
 
@@ -70,9 +97,9 @@ b
     test_eq('Test 1.1', test1, 11, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
+    test_input_2 = to_list_2(test_input_raw)
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 6, test_input_2)
     print()
 
     data_raw = get_input(f'input{DAY}')
@@ -86,6 +113,7 @@ b
         else:
             save_solution(DAY, 1, r)
 
+    data = to_list_2(data_raw)
     r = part2(data)
     if r is not None:
         print('Part 2:', r)

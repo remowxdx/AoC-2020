@@ -2,6 +2,8 @@
 
 from aoc import *
 
+import re
+
 pd = Debug(True)
 DAY = 7
 SOLVED_1 = True
@@ -12,22 +14,25 @@ def get_input(filename):
         lines = f.read()
     return lines.splitlines()
 
+match_bag = "^([a-z]+ [a-z]+) bags contain (.*)$"
+match_inner_bag = "[^0-9]*([0-9]+) ([a-z]+ [a-z]+)"
+
 def to_list(data):
     rules = {}
     for line in data:
-        words = line.split()
-        bag_type = ' '.join(words[:2])
-        i = 4
+        m = re.match(match_bag, line)
+        bag_type = m.group(1)
         rules[bag_type] = {}
-        while i < len(words):
-            if not words[i].isdigit():
-                # No other bags
-                break
-            num = int(words[i])
-            inner_bag = ' '.join(words[i+1:i+3])
+        rules_desc = m.group(2)
+        for rule in rules_desc.split(','):
+            m = re.match(match_inner_bag, rule)
+            if m is None:
+                continue
+            num = int(m.group(1))
+            inner_bag = m.group(2)
             rules[bag_type][inner_bag] = num
-            i += 4
     return rules
+
 
 def find_bag(rules, outer, current, target):
     if current == target:
@@ -50,7 +55,6 @@ def test1(data):
     r = set()
     for bag in data:
         r.update(find_bag(data, bag, bag, 'shiny gold'))
-    print(r)
 
     if 'shiny gold' in r:
         return len(r) - 1
@@ -64,7 +68,6 @@ def part1(data):
     r = set()
     for bag in data:
         r.update(find_bag(data, bag, bag, 'shiny gold'))
-    print(r)
 
     if 'shiny gold' in r:
         return len(r) - 1

@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 7
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -22,18 +22,11 @@ def to_list(data):
         for rd in rules_desc:
             if rd.strip().startswith('no other'):
                 continue
-            print(line)
             words = rd.strip().split()
             num = int(words[0])
             inner_bag = f'{words[1]} {words[2]}'
             bag_rules[inner_bag] = num
         rules[bag_type] = bag_rules
-    i = 0
-    for bag in rules:
-        print(bag, rules[bag])
-        if i > 10:
-            break
-        i += 1
     return rules
 
 def find_bag(rules, outer, current, target):
@@ -47,6 +40,11 @@ def find_bag(rules, outer, current, target):
 
     return r
     
+def count_bags(rules, bag):
+    count = 1
+    for inner_bag in rules[bag]:
+        count += rules[bag][inner_bag] * count_bags(rules, inner_bag) 
+    return count
 
 def test1(data):
     r = set()
@@ -60,7 +58,7 @@ def test1(data):
         return len(r)
 
 def test2(data):
-    return 0
+    return count_bags(data, 'shiny gold') - 1
 
 def part1(data):
     r = set()
@@ -74,7 +72,7 @@ def part1(data):
         return len(r)
 
 def part2(data):
-    return None
+    return count_bags(data, 'shiny gold') - 1
 
 if __name__ == '__main__':
 
@@ -93,14 +91,25 @@ dotted black bags contain no other bags.
     test_eq('Test 1.1', test1, 4, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
+    test_input_raw = '''shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags.
+'''.splitlines()
+
+    test_input_2 = to_list(test_input_raw)
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 32, test_input_1)
+    test_eq('Test 2.2', test2, 126, test_input_2)
     print()
 
-    data = get_input(f'input{DAY}')
+    data_raw = get_input(f'input{DAY}')
+    data = to_list(data_raw)
 
-    r = part1(to_list(data))
+    r = part1(data)
     if r is not None:
         print('Part 1:', r)
         if SOLVED_1:

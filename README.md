@@ -248,6 +248,13 @@ counts for all the inner bags.
 
 From the result we subtract 1 because the *shiny gold* bag doesn't count.
 
-Now let me find another way to parse the rules...
+After finding the solutions, I modified the parsing twice:
+
+- first `split`ting the line in words and looking at the indices to
+find bag types and quantities
+- then using regular expression.
+
+The `find` and `count` algorithms stayed the same.
+
 
 

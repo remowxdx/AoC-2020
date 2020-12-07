@@ -211,3 +211,43 @@ been answered by all people in the group.
 
 Finally I counted the `True`s in th entire array of groups.
 
+## [Day 7](https://adventofcode.com/2020/day/7)
+
+Sheesh, 52 minutes for Part 1 and 14 for Part 2.
+
+I confirm that I don't like to parse those strings...
+Took me forever to see that I left spaces around the words, and
+I sprinkled `.strip()` everywhere!
+
+Well the basis of today's puzzle is **recursion**!
+
+I painfully parsed the rules in a `dict` where the keys are the bag
+types and each contains a `dict` where the keys are the type of the
+inner bags and as value have the number of bags:
+
+```
+rules = {
+    'light red': {'bright white': 1, 'muted yellow': 2},
+    ...
+}
+```
+
+For Part 1, I wrote the function `find_bag()`, which takes the
+parsed rules, the starting bag, the current bag and the target
+bag. The recursion stops when we find the target bag (`current == target`).
+Because we don't want repetions, I return a `set` with the starting bag type.
+
+Then we find the bags for each of the inner bag, adding into the result
+set (use `update`, because `union` leaves the set unchanged!
+*RTFM and save time!*).
+
+For Part 2 another recursive function that counts the inner bags:
+`count_bags` takes the rules and the starting bag.
+`count` starts from 1 because it is the bag itself, then we add the
+counts for all the inner bags.
+
+From the result we subtract 1 because the *shiny gold* bag doesn't count.
+
+Now let me find another way to parse the rules...
+
+

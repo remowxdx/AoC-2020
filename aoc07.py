@@ -15,18 +15,18 @@ def get_input(filename):
 def to_list(data):
     rules = {}
     for line in data:
-        bag, desc = line.split('contain')
-        bag_type = bag.strip().replace('bags', '').strip()
-        rules_desc = desc.strip().split(',')
-        bag_rules = {}
-        for rd in rules_desc:
-            if rd.strip().startswith('no other'):
-                continue
-            words = rd.strip().split()
-            num = int(words[0])
-            inner_bag = f'{words[1]} {words[2]}'
-            bag_rules[inner_bag] = num
-        rules[bag_type] = bag_rules
+        words = line.split()
+        bag_type = ' '.join(words[:2])
+        i = 4
+        rules[bag_type] = {}
+        while i < len(words):
+            if not words[i].isdigit():
+                # No other bags
+                break
+            num = int(words[i])
+            inner_bag = ' '.join(words[i+1:i+3])
+            rules[bag_type][inner_bag] = num
+            i += 4
     return rules
 
 def find_bag(rules, outer, current, target):

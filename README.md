@@ -257,4 +257,35 @@ find bag types and quantities
 The `find` and `count` algorithms stayed the same.
 
 
+## [Day 8](https://adventofcode.com/2020/day/8)
+
+Part 1 took me 29 minutes, but Part 2 47 minutes!
+
+Part 2 took so long because I forgot to restart the console after
+each modification of the boot program... So after finding the
+solution I added this `restart()` method, just to remember.
+
+I actually liked this puzzle, it reminded me of last year puzzles.
+Part 1 went more or less without problems, I created this `Console` class,
+that is simulating the console.
+It has some methods:
+
+- one method to load the code (`decode()` initially, that then I
+changed to `load()`)
+- a `restart()`method ot restart the console (after modifications!!!)
+- an `execute()` method to execute one instruction
+- a `step()` method to managed the actual execution (raise exception,
+keep track of already executed instruction, ...)
+- a `run()` method to run the program
+- and finally a `modify()` method to toggle an instruction between
+`jmp` and `nop`
+
+These class raises the appropriate `ConsoleException`s while running:
+
+- `ConsoleError` for programming errors (shoule never raise)
+- `ConsoleInfiniteLoop` when an infinite loop is detected
+- `ConsoleTerminated` when the program successfully terminates
+
+With these class and exceptions, the puzzle is pretty straightforward
+just `run` the console and catch the appropriate exceptions.
 

@@ -6,7 +6,7 @@ These are my attempts to solve the [Advent of Code 2020](https://adventofcode.co
 
 OK, day 1 has been easy, 7 minutes to do part 1 and other 4 to do part 2.
 
-The puzzles asked to find in a list of number two (or three) numbers that
+The puzzle asked to find in a list of number two (or three) numbers that
 added together give the result of *2020*.
 
 For the first solution I simply ran two (or three) nested loops over the data
@@ -27,7 +27,7 @@ And the algorithm also tries the couple of number twice.
 After having found the solutions I tried to find a more general and elegant
 solution.
 After a bit of thinking, I came up with a recursive solution.
-Also this solutions doesn't worry about taking the same number more than
+Also this solution doesn't worry about taking the same number more than
 once, and the numbers are tried more than once in various orders.
 
 The idea of the recursion is that you get the first number, and then you try
@@ -67,7 +67,7 @@ for index, n in enumerate(data):
 ```
 
 And to speed up still more we could sort then numbers before looping
-adn stop the recursion once we get over 2020 (or below 0).
+and stop the recursion once we get over 2020 (or below 0).
 
 ## [Day 2](https://adventofcode.com/2020/day/2)
 
@@ -77,7 +77,7 @@ The problem was easy to solve, but I made some mistakes in the parsing
 of the strings... and reading the wording of the problem:
 
 - it took me too much time to parse the policy part of the input
-- I didn't realized that I left a space at the start of the password, thus
+- I didn't realized that I left a space at the start of some passwords, thus
 changing the indexing of the position of the letters.
 - I didn't read the *"exactly one of these positions"* although it was emphasized.
 
@@ -98,6 +98,7 @@ and then just take the sum of the numbers in the list.
 ## [Day 3](https://adventofcode.com/2020/day/3)
 
 Ok, Part 1 took me 22 minutes, Part 2 5.
+
 Part 1 took longer because I thought that the *right* and *down* were
 variable so I didn't hard coded them.
 Also (and more time was sank here) my first solution was wrong and I didn't
@@ -115,7 +116,7 @@ I think that nothing particular goes on here:
 In reality I expected that the second part wanted the slope with the minimum
 number of tree encountered.
 
-After finding the solutions I didn't what to do to make something different.
+After finding the solutions I didn't know what to do to make something different.
 After some thinking I decided to make the function `count_trees` parallel.
 Also here nothing spectacular: now `count_trees` goes line by line updating
 the tree count for each slope. The counting is done only if
@@ -124,10 +125,12 @@ the tree count for each slope. The counting is done only if
 ## [Day 4](https://adventofcode.com/2020/day/4)
 
 Part 1 took 25 minutes, Part 2 32.
+
 This are the kind of problems which I like less: much parsing and many rules.
-The implementation straightforward: parse the passports in a list of
+
+The implementation is straightforward: parse the passports in a list of
 dicts (Maps) and then check that they have "all" required fields for part 1.
-And also check that the field's values are valid for part 2.
+And also check that the value of the fields is valid for part 2.
 As always I had problems parsing the strings...
 
 For part 2 I decided to not use regular expression, so I worked with only
@@ -135,9 +138,9 @@ standard string method.
 
 After finding the solution, I changed the function to check the validity
 of the field to use regular expressions. 
-I created dict with the field as index, and a tuple with the regular
-expression and the limits of the values.
-Looking at it, I don't know which method I like more...
+I created a `dict` with the field as index, and a tuple with the regular
+expression and the limits of the field as values.
+Looking at it, I don't know which method is better...
 
 My third attempt is using exceptions to validate passwords:
 instead of returning `True` or `False` the functions validating
@@ -156,7 +159,7 @@ What I immediately realized, was that "F", "B", "R", "L" are only another
 way to write the seat number in binary: "F" means `0`, "B" means `1`, "L"
 means `0` and "R" means `1`.
 
-So the problem is *really* easy to solve: just transform the binary
+So the problem is *really easy* to solve: just transform the binary
 number in base 10 and you have your seat ID.
 
 ```
@@ -216,7 +219,7 @@ Finally I counted the `True`s in th entire array of groups.
 Sheesh, 52 minutes for Part 1 and 14 for Part 2.
 
 I confirm that I don't like to parse those strings...
-Took me forever to see that I left spaces around the words, and
+Took me forever to see that I left spaces around some of the words... and
 I sprinkled `.strip()` everywhere!
 
 Well the basis of today's puzzle is **recursion**!
@@ -235,7 +238,7 @@ rules = {
 For Part 1, I wrote the function `find_bag()`, which takes the
 parsed rules, the starting bag, the current bag and the target
 bag. The recursion stops when we find the target bag (`current == target`).
-Because we don't want repetions, I return a `set` with the starting bag type.
+Because we don't want repetitions, I return a `set` with the starting bag type.
 
 Then we find the bags for each of the inner bag, adding into the result
 set (use `update`, because `union` leaves the set unchanged!
@@ -266,23 +269,23 @@ each modification of the boot program... So after finding the
 solution I added this `restart()` method, just to remember.
 
 I actually liked this puzzle, it reminded me of last year puzzles.
-Part 1 went more or less without problems, I created this `Console` class,
+Part 1 went more or less without problems, I created the `Console` class,
 that is simulating the console.
 It has some methods:
 
 - one method to load the code (`decode()` initially, that then I
 changed to `load()`)
-- a `restart()`method ot restart the console (after modifications!!!)
+- a `restart()`method to restart the console (after modifications!!!)
 - an `execute()` method to execute one instruction
-- a `step()` method to managed the actual execution (raise exception,
-keep track of already executed instruction, ...)
+- a `step()` method to manage the actual instruction execution (raise
+exceptions, keep track of already executed instruction, ...)
 - a `run()` method to run the program
 - and finally a `modify()` method to toggle an instruction between
 `jmp` and `nop`
 
-These class raises the appropriate `ConsoleException`s while running:
+This class raises the appropriate `ConsoleException`s while running:
 
-- `ConsoleError` for programming errors (shoule never raise)
+- `ConsoleError` for programming errors (should never raise)
 - `ConsoleInfiniteLoop` when an infinite loop is detected
 - `ConsoleTerminated` when the program successfully terminates
 

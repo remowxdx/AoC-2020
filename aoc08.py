@@ -8,6 +8,9 @@ SOLVED_1 = True
 SOLVED_2 = True
 
 class ConsoleException(Exception):
+    pass
+
+class ConsoleError(ConsoleException):
     def __init__(self, console, message):
         self.console = console
         self.message = message
@@ -15,26 +18,38 @@ class ConsoleException(Exception):
     def __str__(self):
         return f'Console: {self.message} on instruction {self.console.instruction} with accumulator {self.console.accumulator}.'
 
+class ConsoleInfiniteLoop(ConsoleException):
+    def __init__(self, console):
+        self.console = console
+
+    def __str__(self):
+        return f'Console: entered infinite loop on instruction {self.console.instruction} with accumulator {self.console.accumulator}.'
+
+class ConsoleTerminated(ConsoleException):
+    def __init__(self, console):
+        self.console = console
+
+    def __str__(self):
+        return f'Console: program terminated on instruction {self.console.instruction} with accumulator {self.console.accumulator}.'
+
 class Console:
     def __init__(self, code):
-        self.decode(code)
+        self.load(code)
+        self.restart()
+
+    def restart(self):
         self.instruction = 0
         self.accumulator = 0
         self.executed = []
 
     def modify(self, instruction):
         if self.code[instruction][0] == 'nop':
-            print('Modified instruction', instruction, self.code[instruction])
             self.code[instruction] = ('jmp', self.code[instruction][1])
-            print('Modified instruction', instruction, self.code[instruction])
             return True
         elif self.code[instruction][0] == 'jmp':
-            print('Modified instruction', instruction, self.code[instruction])
             self.code[instruction] = ('nop', self.code[instruction][1])
-            print('Modified instruction', instruction, self.code[instruction])
             return True
         else:
-            print('Instruction not modified', instruction, self.code[instruction])
             return False
 
     def execute(self, instruction, argument):
@@ -46,28 +61,26 @@ class Console:
         elif instruction == 'nop':
             self.instruction += 1
         else:
-            raise ConsoleException(self, "Unknown instruction.")
+            raise ConsoleError(self, "unknown instruction")
 
     def step(self):
+        if self.instruction in self.executed:
+            raise ConsoleInfiniteLoop(self)
         if self.instruction == len(self.code):
-            raise ConsoleException(self, "Terminated successfully.")
+            raise ConsoleTerminated(self)
         if self.instruction > len(self.code):
-            raise ConsoleException(self, "Executing instruction out of range.")
+            raise ConsoleError(self, "executing instruction out of range")
         if self.instruction < 0:
-            raise ConsoleException(self, "Executing non existing instruction.")
+            raise ConsoleError(self, "executing non existing instruction")
         # print(f'{self.instruction}: {self.code[self.instruction][0]} {self.code[self.instruction][1]}')
         self.executed.append(self.instruction);
         self.execute(self.code[self.instruction][0], self.code[self.instruction][1])
 
     def run(self):
         while True:
-            if self.instruction in self.executed:
-                # print('Instruction', self.instruction, 'already executed')
-                return self.accumulator
             self.step()
-        return None
 
-    def decode(self, lines):
+    def load(self, lines):
         self.code = []
         for line in lines:
             instruction, argument = line.split()
@@ -82,38 +95,48 @@ def get_input(filename):
 
 def test1(data):
     c = Console(data)
-    return c.run()
+    try:
+        c.run()
+    except ConsoleInfiniteLoop as e:
+        return c.accumulator
 
 def test2(data):
     i = len(data) - 1
-    print()
     while i >= 0:
         c = Console(data)
         if c.modify(i):
             try:
                 c.run()
-            except ConsoleException as e:
-                print(e)
-                print(c.accumulator)
+            except ConsoleTerminated as e:
+                # print(e)
+                # print(c.accumulator)
                 return c.accumulator
+            except ConsoleInfiniteLoop as e:
+                c.modify(i)
         i -= 1
     return None
 
 def part1(data):
     c = Console(data)
-    return c.run()
+    try:
+        c.run()
+    except ConsoleInfiniteLoop as e:
+        return c.accumulator
 
 def part2(data):
     i = len(data) - 1
+    c = Console(data)
     while i >= 0:
-        c = Console(data)
+        c.restart()
         if c.modify(i):
             try:
                 c.run()
-            except ConsoleException as e:
-                print(e)
-                print(c.accumulator)
+            except ConsoleTerminated as e:
+                # print(e)
+                # print(c.accumulator)
                 return c.accumulator
+            except ConsoleInfiniteLoop as e:
+                c.modify(i)
         i -= 1
     print()
     print('Modified all instructions.')

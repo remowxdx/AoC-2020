@@ -292,3 +292,35 @@ This class raises the appropriate `ConsoleException`s while running:
 With these class and exceptions, the puzzle is pretty straightforward
 just `run` the console and catch the appropriate exceptions.
 
+## [Day 9](https://adventofcode.com/2020/day/9)
+
+Part 1 done in 30 minutes and Part 2 in 10.
+
+Here, like in yesterday's puzzle, I wrote a `class` to be the `XMAS`
+cypher. The constructor shuold be given the data and the length of
+the preamble.
+
+The method for part 1 is `is_number_valid()` that takes the index of
+the number that we want to check and gives `True` or `False`.
+We just iterate over the length of the message (excluding the preamble)
+until we find the *invalid* number.
+
+For part 2 I wrote the `find_contiguous_set(_slow)()` method that
+given a number, returns the list of contiguous numbers that sum up
+to the given target.
+
+It works by taking the first two numbers, summing them and see if they
+are good. If not the first three numbers, then first four, etc.
+Then repeats excluding the first number, then the second etc.
+
+This method is slow but it worked.
+
+After finding the solution, I sped up things first by `break`ing the
+loop if the sum exceeds the target (there are no negative numbers!),
+and then by having a running sum so that we must not always calculate
+the sum of the previous numbers.
+
+This gives me an idea... it should not be necessary to start anew
+every time we surpass the target, but just change the direction
+that we add/subtract the numbers... If I find the time I will try it.
+

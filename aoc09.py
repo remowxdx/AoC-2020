@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 9
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 class XMAS:
     def __init__(self, secret, preamble_len):
@@ -23,7 +23,29 @@ class XMAS:
                     return True
         return False
 
+    def find_contiguous_set_fast(self, target):
+        for start in range(len(self.secret) - 1):
+            rs = self.secret[start]
+            for end in range(start + 1, len(self.secret)):
+                rs += self.secret[end]
+                if rs == target:
+                    return self.secret[start:end+1]
+                if rs > target:
+                    break
+        return None
+
     def find_contiguous_set(self, target):
+        for start in range(len(self.secret) - 1):
+            for end in range(start + 2, len(self.secret)):
+                r = self.secret[start:end]
+                s = sum(r)
+                if s == target:
+                    return r
+                if s > target:
+                    break
+        return None
+
+    def find_contiguous_set_slow(self, target):
         for start in range(len(self.secret) - 1):
             for end in range(start + 2, len(self.secret)):
                 r = self.secret[start:end]
@@ -53,9 +75,9 @@ def test2(data):
     x = XMAS(data, 5)
     for i in range(5, len(x)):
         if not x.is_number_valid(i):
-            print(x[i])
+            # print(x[i])
             r = x.find_contiguous_set(x[i])
-            print(r)
+            # print(r)
             return min(r) + max(r)
     return None
 
@@ -70,9 +92,9 @@ def part2(data):
     x = XMAS(data, 25)
     for i in range(25, len(x)):
         if not x.is_number_valid(i):
-            print(x[i])
-            r = x.find_contiguous_set(x[i])
-            print(r)
+            # print(x[i])
+            r = x.find_contiguous_set_fast(x[i])
+            # print(r)
             return min(r) + max(r)
     return None
 

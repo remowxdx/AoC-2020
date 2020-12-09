@@ -23,6 +23,14 @@ class XMAS:
                     return True
         return False
 
+    def find_contiguous_set(self, target):
+        for start in range(len(self.secret) - 1):
+            for end in range(start + 2, len(self.secret)):
+                r = self.secret[start:end]
+                if sum(r) == target:
+                    return r
+        return None
+
     def __len__(self):
         return len(self.secret)
 
@@ -42,7 +50,14 @@ def test1(data):
     return None
 
 def test2(data):
-    return 0
+    x = XMAS(data, 5)
+    for i in range(5, len(x)):
+        if not x.is_number_valid(i):
+            print(x[i])
+            r = x.find_contiguous_set(x[i])
+            print(r)
+            return min(r) + max(r)
+    return None
 
 def part1(data):
     x = XMAS(data, 25)
@@ -52,6 +67,13 @@ def part1(data):
     return None
 
 def part2(data):
+    x = XMAS(data, 25)
+    for i in range(25, len(x)):
+        if not x.is_number_valid(i):
+            print(x[i])
+            r = x.find_contiguous_set(x[i])
+            print(r)
+            return min(r) + max(r)
     return None
 
 if __name__ == '__main__':
@@ -81,9 +103,8 @@ if __name__ == '__main__':
     test_eq('Test 1.1', test1, 127, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 62, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

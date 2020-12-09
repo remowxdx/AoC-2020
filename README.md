@@ -320,7 +320,13 @@ loop if the sum exceeds the target (there are no negative numbers!),
 and then by having a running sum so that we must not always calculate
 the sum of the previous numbers.
 
-This gives me an idea... it should not be necessary to start anew
-every time we surpass the target, but just change the direction
-that we add/subtract the numbers... If I find the time I will try it.
+While writing the comment an idea sparked in my mind:
+I could expand the running sum idea by also shrinking the interval
+when it was too big so that it isn't necessary to start from
+0 every time, but only shrinking until the running sum is bigger
+than the target, then growing the interval again.
+
+So i rewrote the `_fast()` method. You must pay attention to the order
+in which you update the start/end index and the running sum:
+if adding to the interval or removing from the interval!
 

@@ -24,15 +24,41 @@ class XMAS:
         return False
 
     def find_contiguous_set_fast(self, target):
-        for start in range(len(self.secret) - 1):
-            rs = self.secret[start]
-            for end in range(start + 1, len(self.secret)):
-                rs += self.secret[end]
-                if rs == target:
-                    return self.secret[start:end+1]
-                if rs > target:
-                    break
-        return None
+        start = 0
+        end = 0
+        dir = 1 # 1: end -> up, 0: end -> down
+        rs = self[0]
+        while start < len(self) - 1:
+            if end >= len(self):
+            # Not found
+                return [0]
+                
+            if rs == target:
+                return self[start:end+1]
+
+            if dir == 1 and rs > target:
+            # Gone over target: start shrinking and shrink at start
+                dir = -1
+                rs -= self[start]
+                start += 1
+            elif dir == -1 and rs < target:
+            # Shrinked too much: restart growing interval and grow at end
+                dir = 1
+                end += 1
+                rs += self[end]
+            elif dir == 1 and rs < target:
+            # Already growing: grow interval at end
+                end += 1
+                rs += self[end]
+            elif dir == -1 and rs > target:
+            # Already shrinking: shrink interval at end
+                rs -= self[end]
+                end -= 1
+            else:
+                print('AAHHHH!!')
+                return [-1]
+        # Not found
+        return [0]
 
     def find_contiguous_set(self, target):
         for start in range(len(self.secret) - 1):
@@ -76,7 +102,7 @@ def test2(data):
     for i in range(5, len(x)):
         if not x.is_number_valid(i):
             # print(x[i])
-            r = x.find_contiguous_set(x[i])
+            r = x.find_contiguous_set_fast(x[i])
             # print(r)
             return min(r) + max(r)
     return None

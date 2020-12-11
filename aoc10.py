@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 10
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -19,7 +19,7 @@ def test1(data):
     r = [0, 0, 0]
     for j in ndata:
         # print('j:', j)
-        jolt_diff = int(j) - cur_jolt
+        jolt_diff = j - cur_jolt
         # print('diff: ', jolt_diff)
         r[jolt_diff - 1] += 1
         cur_jolt += jolt_diff
@@ -27,7 +27,30 @@ def test1(data):
     return r
 
 def test2(data):
-    return 0
+    a = [1, 1, 2, 4, 7, 13, 28]
+    cur_jolt = 0
+    ndata = [int(j) for j in data]
+    ndata.append(0)
+    ndata.sort()
+    diff_run = [0]
+    for i, jolt in enumerate(ndata):
+        if jolt == 0:
+            continue
+        jolt_diff = jolt - cur_jolt
+        cur_jolt += jolt_diff
+        if jolt_diff == 1:
+            diff_run[-1] += 1
+        elif jolt_diff == 3:
+            diff_run.append(0)
+        else:
+            raise Exception(f'Help! {i}, {jolt}')
+    arrangements = 1
+    for d in diff_run:
+        arrangements *= a[d]
+
+    print(diff_run)
+    print(arrangements)
+    return arrangements
 
 def part1(data):
     cur_jolt = 0
@@ -43,6 +66,30 @@ def part1(data):
     return None
 
 def part2(data):
+    a = [1, 1, 2, 4, 7, 13]
+    cur_jolt = 0
+    ndata = [int(j) for j in data]
+    ndata.append(0)
+    ndata.sort()
+    diff_run = [0]
+    for i, jolt in enumerate(ndata):
+        if jolt == 0:
+            continue
+        jolt_diff = jolt - cur_jolt
+        cur_jolt += jolt_diff
+        if jolt_diff == 1:
+            diff_run[-1] += 1
+        elif jolt_diff == 3:
+            diff_run.append(0)
+        else:
+            raise Exception(f'Help! {i}, {jolt}')
+    arrangements = 1
+    for d in diff_run:
+        arrangements *= a[d]
+
+    print(diff_run)
+    print(arrangements)
+    return arrangements
     return None
 
 if __name__ == '__main__':
@@ -97,7 +144,8 @@ if __name__ == '__main__':
     print()
 
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 8, test_input_1)
+    test_eq('Test 2.2', test2, 19208, test_input_2)
     print()
 
     data = get_input(f'input{DAY}')

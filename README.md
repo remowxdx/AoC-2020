@@ -330,3 +330,58 @@ So i rewrote the `_fast()` method. You must pay attention to the order
 in which you update the start/end index and the running sum:
 if adding to the interval or removing from the interval!
 
+## [Day 10](https://adventofcode.com/2020/day/10)
+
+Part 1 done in 18 minutes and Part 2 in ?? minutes.
+
+Part 2 is "??" because I've been interrupted and I think in reality
+it was more something like 30 minutes of thinking/programming.
+
+Part 1 is pretty straighforward: transform strins to numbers,
+sort the list of adapters, compute the differences and count them in `r`.
+Took more time than necessitate, because I sorted before transforming to
+numbers... (1, 10, 11, ..., 100, ..., 199, 2, 20, ...)
+
+Part 2 took also more time than needed because I struggled (and I still
+haven't found) to find a way to calculate the ways you can arrange `n`
+consecutive joltages. But after some time, I saw that at maximum we have 5
+consecutive joltages and I counted them by hand and hard coded in `a`.
+Then the algorithm just multiplies the `a` of the length of the consecutive
+joltages.
+
+## [Day 11](https://adventofcode.com/2020/day/11)
+
+Part 1 completed in 41 minutes, Part 2 in 11,
+
+For this puzzle I made a class `WaitingArea` that simulates... the 
+waiting area!
+Its methods are:
+
+`seat(x, y)`
+:  gives the status of the `(x, y)` position.
+
+`occupied_neighbors(x, y)`
+:  counts the occupied seats around the position `(x, y)`.
+   Loops thru -1, 0, +1 for `dx` and `dy`, checks that it is not self,
+   check that we are not out of the waiting area and counts
+   the occupied seats it encounters.
+
+`count_occupied()`
+: gives the number of occupied seats in the waiting area
+
+`step()`
+: computes the next round. Creates a list `next_step` where we add
+  the new computed status of the seats. At the end we set `floor` property
+  to `next_step`. Also we keep track if something changes, so that we
+  know when to stop iterating.
+
+Almost the same for Part 2, but we use the `real_` methods.
+
+`real_occupied_neighbors(x, y)`
+:  now iterates thru the 8 directions `(-1, -1), (0, -1), ...` that are left-up
+   up, right-up, ..., check if position is in waiting area, if it's a seat
+   count if occupied, otherwise continue in the same direction.
+
+Now it is a little slow, I think it's due to the use of strings in the
+`floor` property of the class. If I find the time I'll try using only
+lists. Or maybe a `dict`.

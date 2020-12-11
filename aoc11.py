@@ -34,6 +34,22 @@ class WaitingArea:
                         count += 1
         return count
 
+    def real_occupied_neighbors(self, x, y):
+        count = 0
+        for direction in [(-1, -1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]:
+            ox = x + direction[0]
+            oy = y + direction[1]
+            while ox >= 0 and oy >= 0 and ox < self.width and oy < self.height:
+                s = self.seat(ox, oy)
+                if s == '#':
+                    count += 1
+                    break
+                if s == 'L':
+                    break
+                ox += direction[0]
+                oy += direction[1]
+        return count
+
     def step(self):
         next_step = []
         changed = False
@@ -50,6 +66,31 @@ class WaitingArea:
                         if s != '#':
                             changed = True
                     elif o >= 4:
+                        row += 'L'
+                        if s != 'L':
+                            changed = True
+                    else:
+                        row += s
+            next_step.append(row)
+        self.floor = next_step
+        return changed
+
+    def real_step(self):
+        next_step = []
+        changed = False
+        for y in range(self.height):
+            row = ''
+            for x in range(self.width):
+                s = self.seat(x, y)
+                if s == '.':
+                    row += '.'
+                else:
+                    o = self.real_occupied_neighbors(x, y)
+                    if o == 0:
+                        row += '#'
+                        if s != '#':
+                            changed = True
+                    elif o >= 5:
                         row += 'L'
                         if s != 'L':
                             changed = True
@@ -82,7 +123,17 @@ def test1(data):
     return w.count_occupied()
 
 def test2(data):
-    return 0
+    w = WaitingArea(data)
+    c = True
+    turns = 0
+    # print('------', turns)
+    # print('\n'.join(w.floor))
+    while c:
+        c = w.real_step()
+        # print('------', turns)
+        # print('\n'.join(w.floor))
+        turns += 1
+    return w.count_occupied()
 
 def part1(data):
     w = WaitingArea(data)
@@ -99,7 +150,17 @@ def part1(data):
     return w.count_occupied()
 
 def part2(data):
-    return None
+    w = WaitingArea(data)
+    c = True
+    turns = 0
+    # print('------', turns)
+    # print('\n'.join(w.floor))
+    while c:
+        c = w.real_step()
+        # print('------', turns)
+        # print('\n'.join(w.floor))
+        turns += 1
+    return w.count_occupied()
 
 if __name__ == '__main__':
 
@@ -118,9 +179,8 @@ L.LLLLL.LL
     test_eq('Test 1.1', test1, 37, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 26, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

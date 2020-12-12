@@ -5,13 +5,14 @@ from aoc import *
 pd = Debug(True)
 DAY = 12
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 
 class Ship:
     def __init__(self):
         self.pos = (0, 0)
         self.dir = (1, 0)
+        self.waypoint = (10, 1)
 
         self.char_to_dir = {
             'E': (1, 0),
@@ -44,6 +45,30 @@ class Ship:
         else:
             raise Exception('Unknown action')
 
+    def waypoint_left(self):
+        self.waypoint = (-self.waypoint[1], self.waypoint[0])
+
+    def waypoint_right(self):
+        self.waypoint = (self.waypoint[1], -self.waypoint[0])
+
+    def waypoint_step(self, action, value):
+        if action in self.char_to_dir:
+            d = self.char_to_dir[action]
+            self.waypoint = (self.waypoint[0] + d[0] * value, self.waypoint[1] + d[1] * value)
+        elif action == 'L':
+            while value > 0:
+                self.waypoint_left()
+                value -= 90
+        elif action == 'R':
+            while value > 0:
+                self.waypoint_right()
+                value -= 90
+        elif action == 'F':
+            d = self.waypoint
+            self.pos = (self.pos[0] + d[0] * value, self.pos[1] + d[1] * value)
+        else:
+            raise Exception('Unknown action')
+
     def parse_command(self, command):
         action = command[0]
         value = int(command[1:])
@@ -61,7 +86,10 @@ def test1(data):
     return abs(s.pos[0]) + abs(s.pos[1])
 
 def test2(data):
-    return 0
+    s = Ship()
+    for command in data:
+        s.waypoint_step(*s.parse_command(command))
+    return abs(s.pos[0]) + abs(s.pos[1])
 
 def part1(data):
     s = Ship()
@@ -70,7 +98,10 @@ def part1(data):
     return abs(s.pos[0]) + abs(s.pos[1])
 
 def part2(data):
-    return None
+    s = Ship()
+    for command in data:
+        s.waypoint_step(*s.parse_command(command))
+    return abs(s.pos[0]) + abs(s.pos[1])
 
 if __name__ == '__main__':
 
@@ -86,7 +117,7 @@ F11
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 286, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

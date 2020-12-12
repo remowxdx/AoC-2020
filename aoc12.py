@@ -4,7 +4,7 @@ from aoc import *
 
 pd = Debug(True)
 DAY = 12
-SOLVED_1 = False
+SOLVED_1 = True
 SOLVED_2 = False
 
 

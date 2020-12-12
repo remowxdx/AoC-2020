@@ -1,71 +1,52 @@
 #!/usr/bin/env python3
 
 from aoc import *
+from tools import Vector
 
 pd = Debug(True)
 DAY = 12
 SOLVED_1 = True
 SOLVED_2 = True
 
-
 class Ship:
     def __init__(self):
-        self.pos = (0, 0)
-        self.dir = (1, 0)
-        self.waypoint = (10, 1)
-
-        self.char_to_dir = {
-            'E': (1, 0),
-            'W': (-1, 0),
-            'S': (0, -1),
-            'N': (0, 1),
-        }
-
-    def turn_left(self):
-        self.dir = (-self.dir[1], self.dir[0])
-
-    def turn_right(self):
-        self.dir = (self.dir[1], -self.dir[0])
+        self.pos = Vector.null()
+        self.dir = Vector.unit('E')
+        self.waypoint = Vector(10, 1)
 
     def step(self, action, value):
-        if action in self.char_to_dir:
-            d = self.char_to_dir[action]
-            self.pos = (self.pos[0] + d[0] * value, self.pos[1] + d[1] * value)
+        if action in Vector.directions:
+            d = Vector.unit(action)
+            self.pos += d * value
         elif action == 'L':
             while value > 0:
-                self.turn_left()
+                self.dir.rotate_left_90()
                 value -= 90
         elif action == 'R':
             while value > 0:
-                self.turn_right()
+                self.dir.rotate_right_90()
                 value -= 90
         elif action == 'F':
             d = self.dir
-            self.pos = (self.pos[0] + d[0] * value, self.pos[1] + d[1] * value)
+            self.pos += d * value
         else:
             raise Exception('Unknown action')
 
-    def waypoint_left(self):
-        self.waypoint = (-self.waypoint[1], self.waypoint[0])
-
-    def waypoint_right(self):
-        self.waypoint = (self.waypoint[1], -self.waypoint[0])
-
     def waypoint_step(self, action, value):
-        if action in self.char_to_dir:
-            d = self.char_to_dir[action]
-            self.waypoint = (self.waypoint[0] + d[0] * value, self.waypoint[1] + d[1] * value)
+        if action in Vector.directions:
+            d = Vector.unit(action)
+            self.waypoint += d * value
         elif action == 'L':
             while value > 0:
-                self.waypoint_left()
+                self.waypoint.rotate_left_90()
                 value -= 90
         elif action == 'R':
             while value > 0:
-                self.waypoint_right()
+                self.waypoint.rotate_right_90()
                 value -= 90
         elif action == 'F':
             d = self.waypoint
-            self.pos = (self.pos[0] + d[0] * value, self.pos[1] + d[1] * value)
+            self.pos += d * value
         else:
             raise Exception('Unknown action')
 
@@ -73,6 +54,9 @@ class Ship:
         action = command[0]
         value = int(command[1:])
         return action, value
+
+    def manhattan(self):
+        return self.pos.manhattan()
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -83,25 +67,25 @@ def test1(data):
     s = Ship()
     for command in data:
         s.step(*s.parse_command(command))
-    return abs(s.pos[0]) + abs(s.pos[1])
+    return s.manhattan()
 
 def test2(data):
     s = Ship()
     for command in data:
         s.waypoint_step(*s.parse_command(command))
-    return abs(s.pos[0]) + abs(s.pos[1])
+    return s.manhattan()
 
 def part1(data):
     s = Ship()
     for command in data:
         s.step(*s.parse_command(command))
-    return abs(s.pos[0]) + abs(s.pos[1])
+    return s.manhattan()
 
 def part2(data):
     s = Ship()
     for command in data:
         s.waypoint_step(*s.parse_command(command))
-    return abs(s.pos[0]) + abs(s.pos[1])
+    return s.manhattan()
 
 if __name__ == '__main__':
 

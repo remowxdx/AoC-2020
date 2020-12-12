@@ -385,3 +385,22 @@ Almost the same for Part 2, but we use the `real_` methods.
 Now it is a little slow, I think it's due to the use of strings in the
 `floor` property of the class. If I find the time I'll try using only
 lists. Or maybe a `dict`.
+
+## [Day 12](https://adventofcode.com/2020/day/12)
+
+Ok, 17 minutes for Part 1 and 12 for Part 2.
+
+This has been fairls easy. I think I had no problems.
+
+In Part 1, I created the class `Ship`, that has a `pos`ition and a 
+`dir`ection, that are tuples with `x` and `y` coordinates (vectors).
+I added a `char_to_dir` property to transform the `N`, 
+`S`, `E` and `W` characters to vectors.
+Then `turn_left()`,  `turn_right()` and `parse_command()` are self explanatory
+(I think).
+The `step()` method does the right action. It's all easy and enough clear,
+maybe it is clearer if I rewrite it using vectors.
+
+Part 2 is the same as Part1, only the methods are prefixed with `waypoint_`
+and the is `waypoint` property.
+

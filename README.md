@@ -404,3 +404,7 @@ maybe it is clearer if I rewrite it using vectors.
 Part 2 is the same as Part1, only the methods are prefixed with `waypoint_`
 and the is `waypoint` property.
 
+After having found the solutions, I effectively rewrote it using a `Vector`
+class. I don't know if it is clearer. I moved the Vector class to the
+'tools.py' file, because it could come handy in the future.
+

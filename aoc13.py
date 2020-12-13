@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 13
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -18,6 +18,14 @@ def get_lines_in_service(lines):
         if line == 'x':
             continue
         service.append(int(line))
+    return service
+
+def get_diff_lines(lines):
+    service = []
+    for diff, line in enumerate(lines.split(',')):
+        if line == 'x':
+            continue
+        service.append((int(line), diff))
     return service
 
 def test1(data):
@@ -35,8 +43,37 @@ def test1(data):
 
     return (earliest_departure - after) * earliest_line
 
+def combine(l1, l2):
+    b1, d1 = l1
+    b2, d2 = l2
+    n1 = 1
+    t1 = None
+    while True:
+        t = n1 * b1 - d1
+        if t < 1:
+            print('t<1')
+            n1 += 1
+            continue
+        if (t + d2) % b2 == 0:
+            if t1 is None:
+                t1 = t
+            else:
+                return t - t1, -t1
+        n1 += 1
+
 def test2(data):
-    return 0
+    diff = get_diff_lines(data[1])
+    print()
+    print(diff)
+    cur = (1,0)
+    for i, l in enumerate(diff):
+        pc = cur[:]
+        cur = combine(cur, l)
+        print(pc, l, '=>', cur)
+        for l in diff[:i+1]:
+            print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
+    # print("-" * 10)
+    return -cur[1]
 
 def part1(data):
     after = int(data[0])
@@ -54,7 +91,18 @@ def part1(data):
     return (earliest_departure - after) * earliest_line
 
 def part2(data):
-    return None
+    diff = get_diff_lines(data[1])
+    print()
+    print(diff)
+    cur = (1,0)
+    for i, l in enumerate(diff):
+        pc = cur[:]
+        cur = combine(cur, l)
+        print(pc, l, '=>', cur)
+        for l in diff[:i+1]:
+            print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
+    # print("-" * 10)
+    return -cur[1]
 
 if __name__ == '__main__':
 
@@ -67,7 +115,7 @@ if __name__ == '__main__':
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 1068781, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

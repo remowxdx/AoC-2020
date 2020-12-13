@@ -63,16 +63,15 @@ def combine(l1, l2):
 
 def test2(data):
     diff = get_diff_lines(data[1])
-    print()
-    print(diff)
+    # print()
+    # print(diff)
     cur = (1,0)
     for i, l in enumerate(diff):
         pc = cur[:]
         cur = combine(cur, l)
-        print(pc, l, '=>', cur)
+        # print(pc, l, '=>', cur)
         for l in diff[:i+1]:
-            print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
-    # print("-" * 10)
+            print(f'--- {l} -> {(-cur[1] + l[1]) / l[0]}')
     return -cur[1]
 
 def part1(data):
@@ -92,15 +91,15 @@ def part1(data):
 
 def part2(data):
     diff = get_diff_lines(data[1])
-    print()
-    print(diff)
+    # print()
+    # print(diff)
     cur = (1,0)
     for i, l in enumerate(diff):
-        pc = cur[:]
+        # pc = cur[:]
         cur = combine(cur, l)
-        print(pc, l, '=>', cur)
-        for l in diff[:i+1]:
-            print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
+        # print(pc, l, '=>', cur)
+        # for l in diff[:i+1]:
+            # print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
     # print("-" * 10)
     return -cur[1]
 

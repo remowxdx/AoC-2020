@@ -408,3 +408,45 @@ After having found the solutions, I effectively rewrote it using a `Vector`
 class. I don't know if it is clearer. I moved the Vector class to the
 'tools.py' file, because it could come handy in the future.
 
+## [Day 13](https://adventofcode.com/2020/day/13)
+
+Day 13 Part 2 has been tough... Part 1 done in 17 minutes, Part 2 in
+8... hours! I reality after 2 hours I got interrupted (relatives), and
+it took me about 30 minutes to get to the solution after the interruption.
+
+Part 1 is relatively easy: once you see that for each bus `line`, the departure
+after the `after` timestamp is `departure = ((after // line) + 1) * line`,
+you just check which line comes first after `after`.
+
+Part 2 is a bit more complicated: well... let me just say that my algorithm
+works, but it is just by chance.
+I wrote the `combine()` function that given two lines, finds, in my intentions,
+a *virtual* line with ID and offset that respect the ID and offset
+of the given lines. Then just `combine()` this line with the next.
+
+The simple (and wrong) `combine()` version is this:
+
+
+```
+def combine(l1, l2):
+    b1, d1 = l1
+    b2, d2 = l2
+    n1 = 1
+    while True:
+        t = n1 * b1 - d1
+        if (t + d2) % b2 == 0:
+                return b1 * b2, t
+        n1 += 1
+```
+
+`l1` and `l2` are the tuples with bus ID and wanted delay for two bus lines.
+We compute every *good* starting timestamp for `l1` with:
+`t = n1 * b1 - d1` and check if it is good also for line `l2`.
+If it's good, return the *virtual* bus ID and delay.
+
+The problem is that it is not the returned *virtual* line: the formula to find the
+timestamp (`ts = l[0] + n * l[1]`).
+Then I played with modulo / + / - / ... to find the right result.
+
+I have to find the **right** way to do it.
+

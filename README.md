@@ -450,3 +450,36 @@ Then I played with modulo / + / - / ... to find the right result.
 
 I have to find the **right** way to do it.
 
+Ok this is the (more) correct way to do it:
+
+```
+def combine(l1, l2):
+    # Here is the bus line data
+    b1, o1 = l1
+    b2, o2 = l2
+
+    # Find the d: instead of advancing from the timestamp to the
+    # departure time, we advance from the previous departure time to
+    # timestamp   (n-1)th depart. <--d-->  T <--o-->  n-th departure
+    d1 = b1 - o1
+    d2 = b2 - o2
+
+    n1 = 1
+    while True:
+
+        # Compute the n-th timestamp
+        t = n1 * b1 + d1
+
+        # Check if the timestamp also works for line l2
+        if (t + d2) % b2 == 0:
+
+            # Compute the virtual line data:
+            b3 = b1 * b2      # I think it shoud be gcm(b1, b2), but b's are prime
+
+            # Go back form d to o
+            n3 = t // b3 + 1 
+            o3 = b3 * n3 - t
+            return b3, o3
+        n1 += 1
+```
+

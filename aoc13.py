@@ -44,35 +44,28 @@ def test1(data):
     return (earliest_departure - after) * earliest_line
 
 def combine(l1, l2):
-    b1, d1 = l1
-    b2, d2 = l2
+    b1, o1 = l1
+    b2, o2 = l2
+
+    d1 = b1 - o1
+    d2 = b2 - o2
+
     n1 = 1
-    t1 = None
     while True:
-        t = n1 * b1 - d1
-        if t < 1:
-            print('t<1')
-            n1 += 1
-            continue
+        t = n1 * b1 + d1
         if (t + d2) % b2 == 0:
-            if t1 is None:
-                t1 = t
-            else:
-                return t - t1, -t1
+            b3 = b1 * b2
+            n3 = t // b3 + 1
+            o3 = b3 * n3 - t
+            return b3, o3
         n1 += 1
 
 def test2(data):
     diff = get_diff_lines(data[1])
-    # print()
-    # print(diff)
     cur = (1,0)
     for i, l in enumerate(diff):
-        pc = cur[:]
         cur = combine(cur, l)
-        # print(pc, l, '=>', cur)
-        for l in diff[:i+1]:
-            print(f'--- {l} -> {(-cur[1] + l[1]) / l[0]}')
-    return -cur[1]
+    return cur[1]
 
 def part1(data):
     after = int(data[0])
@@ -91,17 +84,10 @@ def part1(data):
 
 def part2(data):
     diff = get_diff_lines(data[1])
-    # print()
-    # print(diff)
     cur = (1,0)
     for i, l in enumerate(diff):
-        # pc = cur[:]
         cur = combine(cur, l)
-        # print(pc, l, '=>', cur)
-        # for l in diff[:i+1]:
-            # print(f'--- {l} -> {(cur[1] + l[1]) / l[0]}')
-    # print("-" * 10)
-    return -cur[1]
+    return cur[1]
 
 if __name__ == '__main__':
 

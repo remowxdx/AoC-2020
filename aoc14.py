@@ -46,6 +46,13 @@ class Memory:
         else:
             raise Exception('Unknown command.')
 
+    def memory_sum(self):
+        s = 0
+        for address in self.m:
+            s += self.m[address]
+        return s
+
+
 class Memory2:
     def __init__(self):
         self.m = {}
@@ -90,6 +97,11 @@ class Memory2:
         else:
             raise Exception('Unknown command.')
 
+    def memory_sum(self):
+        s = 0
+        for address in self.m:
+            s += self.m[address]
+        return s
 
         
 def get_input(filename):
@@ -101,45 +113,25 @@ def test1(data):
     m = Memory()
     for line in data:
         m.exec(line)
-
-    s = 0
-    for address in m.m:
-        s += m.m[address]
-
-    return s
+    return m.memory_sum()
 
 def test2(data):
     m = Memory2()
     for line in data:
         m.exec(line)
-
-    s = 0
-    for address in m.m:
-        s += m.m[address]
-
-    return s
+    return m.memory_sum()
 
 def part1(data):
     m = Memory()
     for line in data:
         m.exec(line)
-
-    s = 0
-    for address in m.m:
-        s += m.m[address]
-
-    return s
+    return m.memory_sum()
 
 def part2(data):
     m = Memory2()
     for line in data:
         m.exec(line)
-
-    s = 0
-    for address in m.m:
-        s += m.m[address]
-
-    return s
+    return m.memory_sum()
 
 if __name__ == '__main__':
 

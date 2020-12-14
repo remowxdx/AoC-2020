@@ -483,3 +483,29 @@ def combine(l1, l2):
         n1 += 1
 ```
 
+## [Day 14](https://adventofcode.com/2020/day/14)
+
+Part 1 done in 35 minutes, Part 2 in 21. I thought it would have taken me
+less time to solve this puzzle...
+
+This puzzle likes bitwise operations. I created a class `Memory` that
+implements the operations described in the puzzle:
+
+- `set_mask()` that sets the mask
+- `set_mem()` that sets the memory applying the mask.
+- `exec()` just interpret the input execute the right `set_` operation.
+
+To set the n-th bit to 1 of `value`, we bitwise "or" the value with a number
+that is all `0`s except the n-th that is a `1`.
+
+To set the n-th bit to 0 of `value`, we bitwise "and" the value with a number
+that is all `1`s except the n-th that is a `0`.
+To find that number, we have to compute a number with all `1` (36 `1`) and
+"xor" it with the number that is all `0`s except the n-th that is a `1`.
+
+For Part 2, the mask is divided into three lists with the index of the `0` bit,
+`1` bit and `X` bit.
+Then in the address the bits that are `1` in the mask, are set to `1` .
+Then with the *floating* bits we recursively set those address bits to `1` and `0`,
+and write to the memory addresses.
+

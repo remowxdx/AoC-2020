@@ -15,9 +15,7 @@ def get_input(filename):
 def test1(data):
     n = 2020
 
-    print(data)
     start = [int(n) for n in data[0].split(',')]
-    print(start)
 
     numbers = {}
     for i, num in enumerate(start):
@@ -27,7 +25,6 @@ def test1(data):
             is_new = True
         prev = (num, i + 1)
         numbers[num] = i + 1
-    print(numbers, is_new)
 
     for i in range(len(start)+1, n+1):
         if is_new:
@@ -36,7 +33,6 @@ def test1(data):
             is_new = False
         else:
             next_num = i - prev[1] - 1
-            # print(i, prev, numbers[prev[0]], next_num)
             if next_num in numbers:
                 is_new = False
                 prev = (next_num, numbers[next_num])
@@ -44,18 +40,45 @@ def test1(data):
                 is_new = True
                 prev = (next_num, i)
             numbers[next_num] = i
-        print(f'{i}: {prev}', is_new)
+        # print(f'{i}: {prev[0]}')
     return prev[0]
 
 def test2(data):
-    return 0
+    n = 30_000_000
+
+    start = [int(n) for n in data[0].split(',')]
+
+    numbers = {}
+    for i, num in enumerate(start):
+        if num in numbers:
+            is_new = False
+        else:
+            is_new = True
+        prev = (num, i + 1)
+        numbers[num] = i + 1
+
+    for i in range(len(start)+1, n+1):
+        if is_new:
+            prev = (0, numbers[0])
+            numbers[0] = i
+            is_new = False
+        else:
+            next_num = i - prev[1] - 1
+            if next_num in numbers:
+                is_new = False
+                prev = (next_num, numbers[next_num])
+            else:
+                is_new = True
+                prev = (next_num, i)
+            numbers[next_num] = i
+        if i % 1000 == 0:
+            print(f'{i}: {prev[0]}')
+    return prev[0]
 
 def part1(data):
     n = 2020
 
-    print(data)
     start = [int(n) for n in data[0].split(',')]
-    print(start)
 
     numbers = {}
     for i, num in enumerate(start):
@@ -65,7 +88,6 @@ def part1(data):
             is_new = True
         prev = (num, i + 1)
         numbers[num] = i + 1
-    print(numbers, is_new)
 
     for i in range(len(start)+1, n+1):
         if is_new:
@@ -74,7 +96,6 @@ def part1(data):
             is_new = False
         else:
             next_num = i - prev[1] - 1
-            # print(i, prev, numbers[prev[0]], next_num)
             if next_num in numbers:
                 is_new = False
                 prev = (next_num, numbers[next_num])
@@ -82,11 +103,40 @@ def part1(data):
                 is_new = True
                 prev = (next_num, i)
             numbers[next_num] = i
-        print(f'{i}: {prev}', is_new)
+        # print(f'{i}: {prev[0]}')
     return prev[0]
 
 def part2(data):
-    return None
+    n = 30_000_000
+
+    start = [int(n) for n in data[0].split(',')]
+
+    numbers = {}
+    for i, num in enumerate(start):
+        if num in numbers:
+            is_new = False
+        else:
+            is_new = True
+        prev = (num, i + 1)
+        numbers[num] = i + 1
+
+    for i in range(len(start)+1, n+1):
+        if is_new:
+            prev = (0, numbers[0])
+            numbers[0] = i
+            is_new = False
+        else:
+            next_num = i - prev[1] - 1
+            if next_num in numbers:
+                is_new = False
+                prev = (next_num, numbers[next_num])
+            else:
+                is_new = True
+                prev = (next_num, i)
+            numbers[next_num] = i
+        if i % 1000 == 0:
+            print(f'{i}: {prev[0]}')
+    return prev[0]
 
 if __name__ == '__main__':
 
@@ -97,7 +147,7 @@ if __name__ == '__main__':
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 175594, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

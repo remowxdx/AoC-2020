@@ -509,3 +509,16 @@ Then in the address the bits that are `1` in the mask, are set to `1` .
 Then with the *floating* bits we recursively set those address bits to `1` and `0`,
 and write to the memory addresses.
 
+## [Day 15](https://adventofcode.com/2020/day/15)
+
+Ok, Part 1 in 32 minutes, Part 2 in 11 minutes.
+
+For this puzzle, I simply coded the rules and let the program go to the
+end: for Part 1 and also for Part 2.
+
+The "difficult" part was to keep track of the previous element
+(`prev` and `is_new`) before updating it, in the `numbers` dict.
+
+In Part 2 the computation took a bit of time, but not too much.
+I think I'll find a way to do it faster... if there is such a way.
+

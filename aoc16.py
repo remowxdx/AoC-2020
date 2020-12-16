@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 16
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -58,6 +58,13 @@ def validates_one_rule(value, rules):
     return False
             
 
+def is_valid(ticket, rules):
+    for value in ticket:
+        for rule in rules:
+            if in_one_interval(value, rules[rule]):
+                return True
+    return False
+
 def get_invalid_values(ticket, rules):
     invalid = []
     for value in ticket:
@@ -74,7 +81,41 @@ def test1(data):
     return sum(invalid)
 
 def test2(data):
-    return 0
+    inp = parse_input(data)
+    valid_tickets = []
+
+# Get only valid tickets
+    for ticket in inp['nearby tickets']:
+        if is_valid(ticket, inp['rules']):
+            valid_tickets.append(ticket)
+    print()
+    print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
+
+    fields = list(inp['rules'].keys())
+    possible_fields = [fields[:] for f in fields]
+    print(fields)
+
+
+    for field_index in range(len(fields)):
+        for rule in fields:
+            for ticket in valid_tickets:
+                if not in_one_interval(ticket[field_index], inp['rules'][rule]):
+                    possible_fields[field_index].remove(rule)
+                    break
+    print(possible_fields)
+
+    not_ok = True
+    while not_ok:
+        not_ok = False
+        for i, fields in enumerate(possible_fields):
+            if len(fields) == 1:
+                for j, f in enumerate(possible_fields):
+                    if i != j and fields[0] in f:
+                        f.remove(fields[0])
+            else:
+                not_ok = True
+    print(possible_fields)
+    return [f[0] for f in possible_fields]
 
 def part1(data):
     i = parse_input(data)
@@ -84,7 +125,55 @@ def part1(data):
     return sum(invalid)
 
 def part2(data):
-    return None
+    inp = parse_input(data)
+    invalid_values = []
+
+    for ticket in inp['nearby tickets']:
+        invalid_values.extend(get_invalid_values(ticket, inp['rules']))
+
+# Get only valid tickets
+    valid_tickets = []
+    for ticket in inp['nearby tickets']:
+        valid = True
+        for value in ticket:
+            if value in invalid_values:
+                valid = False
+        if valid:
+            valid_tickets.append(ticket)
+
+    print()
+    print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
+
+    fields = list(inp['rules'].keys())
+    possible_fields = [fields[:] for f in fields]
+    print(fields)
+
+
+    for field_index in range(len(fields)):
+        for rule in fields:
+            for ticket in valid_tickets:
+                if not in_one_interval(ticket[field_index], inp['rules'][rule]):
+                    possible_fields[field_index].remove(rule)
+                    break
+    print(possible_fields)
+
+    not_ok = True
+    while not_ok:
+        not_ok = False
+        for i, fields in enumerate(possible_fields):
+            if len(fields) == 1:
+                for j, f in enumerate(possible_fields):
+                    if i != j and fields[0] in f:
+                        f.remove(fields[0])
+            else:
+                not_ok = True
+    print(possible_fields)
+    m = 1
+    for i, field in enumerate([f[0] for f in possible_fields]):
+        if field.startswith('departure'):
+            m *= inp['my ticket'][i]
+    return m
+
 
 if __name__ == '__main__':
 
@@ -105,9 +194,20 @@ nearby tickets:
     test_eq('Test 1.1', test1, 71, test_input_1)
     print()
 
-    test_input_2 = [4,5,6]
+    test_input_2 = '''class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9
+'''.splitlines()
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, ['row', 'class', 'seat'], test_input_2)
     print()
 
     data = get_input(f'input{DAY}')

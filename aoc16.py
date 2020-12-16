@@ -58,13 +58,6 @@ def validates_one_rule(value, rules):
     return False
             
 
-def is_valid(ticket, rules):
-    for value in ticket:
-        for rule in rules:
-            if in_one_interval(value, rules[rule]):
-                return True
-    return False
-
 def get_invalid_values(ticket, rules):
     invalid = []
     for value in ticket:
@@ -82,52 +75,8 @@ def test1(data):
 
 def test2(data):
     inp = parse_input(data)
-    valid_tickets = []
 
-# Get only valid tickets
-    for ticket in inp['nearby tickets']:
-        if is_valid(ticket, inp['rules']):
-            valid_tickets.append(ticket)
-    print()
-    print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
-
-    fields = list(inp['rules'].keys())
-    possible_fields = [fields[:] for f in fields]
-    print(fields)
-
-
-    for field_index in range(len(fields)):
-        for rule in fields:
-            for ticket in valid_tickets:
-                if not in_one_interval(ticket[field_index], inp['rules'][rule]):
-                    possible_fields[field_index].remove(rule)
-                    break
-    print(possible_fields)
-
-    not_ok = True
-    while not_ok:
-        not_ok = False
-        for i, fields in enumerate(possible_fields):
-            if len(fields) == 1:
-                for j, f in enumerate(possible_fields):
-                    if i != j and fields[0] in f:
-                        f.remove(fields[0])
-            else:
-                not_ok = True
-    print(possible_fields)
-    return [f[0] for f in possible_fields]
-
-def part1(data):
-    i = parse_input(data)
-    invalid = []
-    for ticket in i['nearby tickets']:
-        invalid.extend(get_invalid_values(ticket, i['rules']))
-    return sum(invalid)
-
-def part2(data):
-    inp = parse_input(data)
     invalid_values = []
-
     for ticket in inp['nearby tickets']:
         invalid_values.extend(get_invalid_values(ticket, inp['rules']))
 
@@ -141,13 +90,12 @@ def part2(data):
         if valid:
             valid_tickets.append(ticket)
 
-    print()
-    print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
+    # print()
+    # print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
 
     fields = list(inp['rules'].keys())
     possible_fields = [fields[:] for f in fields]
-    print(fields)
-
+    # print(fields)
 
     for field_index in range(len(fields)):
         for rule in fields:
@@ -155,7 +103,7 @@ def part2(data):
                 if not in_one_interval(ticket[field_index], inp['rules'][rule]):
                     possible_fields[field_index].remove(rule)
                     break
-    print(possible_fields)
+    # print(possible_fields)
 
     not_ok = True
     while not_ok:
@@ -167,7 +115,68 @@ def part2(data):
                         f.remove(fields[0])
             else:
                 not_ok = True
-    print(possible_fields)
+    # print(possible_fields)
+    return [f[0] for f in possible_fields]
+
+def part1(data):
+    i = parse_input(data)
+    invalid = []
+    for ticket in i['nearby tickets']:
+        invalid.extend(get_invalid_values(ticket, i['rules']))
+    return sum(invalid)
+
+def part2(data):
+    inp = parse_input(data)
+
+    invalid_values = []
+    for ticket in inp['nearby tickets']:
+        invalid_values.extend(get_invalid_values(ticket, inp['rules']))
+
+# Get only valid tickets
+    valid_tickets = []
+    for ticket in inp['nearby tickets']:
+        valid = True
+        for value in ticket:
+            if value in invalid_values:
+                valid = False
+        if valid:
+            valid_tickets.append(ticket)
+
+    # print()
+    # print('Valid:', len(valid_tickets), 'All:', len(inp['nearby tickets']))
+
+    fields = list(inp['rules'].keys())
+# For each field number, start with all possible named fields
+    possible_fields = [fields[:] for f in fields]
+    # print(fields)
+
+
+# For each ticket field number, loop thru all tickets to see if one has
+# a value that invalidates a rule. In that case remove the rule
+# from the possible named fields for that field number.
+    for field_index in range(len(fields)):
+        for rule in fields:
+            for ticket in valid_tickets:
+                if not in_one_interval(ticket[field_index], inp['rules'][rule]):
+                    possible_fields[field_index].remove(rule)
+                    break
+    # print(possible_fields)
+
+# Loop thru the possible field to remove the rules that are
+# the only possible rule for another field number
+    not_ok = True
+    while not_ok:
+        not_ok = False
+        for i, fields in enumerate(possible_fields):
+            if len(fields) == 1:
+                for j, f in enumerate(possible_fields):
+                    if i != j and fields[0] in f:
+                        f.remove(fields[0])
+            else:
+                not_ok = True
+    # print(possible_fields)
+
+# Multiply all fields in my tickets that start with 'departure'
     m = 1
     for i, field in enumerate([f[0] for f in possible_fields]):
         if field.startswith('departure'):

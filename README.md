@@ -522,3 +522,54 @@ The "difficult" part was to keep track of the previous element
 In Part 2 the computation took a bit of time, but not too much.
 I think I'll find a way to do it faster... if there is such a way.
 
+... and I still haven't find a faster way...
+
+## [Day 16](https://adventofcode.com/2020/day/16)
+
+Well, 36 minutes for Part 1 and 1 hour and 14 minutes for Part 2.
+This puzzle made me sweat!
+
+Part 1 has not given me particular problems, as always the toughest part has
+been to parse the input.
+Really I should find something better than `split`ting strings.
+
+From the input, I built a `dict` containing:
+
+- `rules` as a `dict` that has as keys the field name and as values a list of pairs
+of numbers that are the limits of the intervals,
+- `my ticket` as a list of values and
+- `nearby tickets` as a list of lists of values
+
+Then the functions:
+
+- `in_interval()` that returns if a `value` is in the given `interval`
+- `in_one_interval()` that say if the `value` is in at least one of the `intervals` given
+- `validates_one_rule()` that says if the value validates at least one of the
+given `rules`
+- `get_invalid_values()` that returns the invalid values in the given `ticket`.
+
+Then Part 1 is only a matter of chaining together the invalid values
+of all the tickets.
+
+Then comes **Part 2**!
+
+Eventually it is not so difficult, but I started towards a path that was
+very inefficient and full of little details that I couldn't all right.
+
+Then I found the *right way*:
+
+- First create a list of valid ticket, i.e. ticket that do not have the invalid
+value of Part 1.
+- Then build a list which for each numerical field (in the order of the tickets)
+has all the named fields (from the rules)
+- Then loop thru all numerical field indexes, analysing every rule for every 
+ticket. If we find that the rule is invalid for a ticket, remove that named
+field from the possible fields for that numerical field.
+- At last loop thru the possible fields, if for a numerical field there is only
+one possible named field, remove that named field from all the other numerical
+field possibilities.
+
+That shoud live you with the named field for each numerical field.
+
+Multiply the value of our ticket where the named field starts with 'departure'
+and we are done.

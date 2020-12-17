@@ -13,88 +13,114 @@ def get_input(filename):
     return lines.splitlines()
 
 class Pocket:
-    def __init__(self, data):
+    def __init__(self, dimensions, data):
+
+        if dimensions < 2:
+            raise ValueError("Dimension is too small.")
+
         self.active = set()
+        self.dimensions = dimensions
+
         self.parse(data)
-        self.dirs = []
-        for z in range(-1, 2):
-            for y in range(-1, 2):
-                for x in range(-1, 2):
-                    if x == 0 and y == 0 and z == 0:
-                        continue
-                    self.dirs.append((x, y, z))
+        self.create_dirs()
+
+    def is_origin(self, coords):
+        for coord in coords:
+            if coord != 0:
+                return False
+        return True
+
+    def create_dirs(self):
+        self.dirs = [[]]
+        for dim in range(self.dimensions):
+            new_d = []
+            for d in self.dirs:
+                for c in range(2):
+                    n = d[:]
+                    n.append(c)
+                    if dim != self.dimensions - 1 or not self.is_origin(n):
+                        new_d.append(n)
+                d.append(-1)
+            self.dirs.extend(new_d)
 
     def parse(self, data):
-        z = 0
+        coord = [0] * self.dimensions
         for y, line in enumerate(data):
             for x, char in enumerate(line):
                 if char == '#':
-                    self.active.add((x, y, z))
+                    coord[0] = x
+                    coord[1] = y
+                    self.active.add(tuple(coord))
 
-    def activate(self, x, y, z):
-        self.active.add((x, y, z))
+    def activate(self, pos):
+        self.active.add(pos)
 
-    def deactivate(self, x, y, z):
-        if (x, y, z) in self.active:
-            self.active.remove((x, y, z))
+    def deactivate(self, pos):
+        if pos in self.active:
+            self.active.remove(pos)
 
-    def is_active(self, x, y, z):
-        return (x, y, z) in self.active
+    def is_active(self, pos):
+        return pos in self.active
 
-    def find_limits(self):
-        min_max = [0, 0, 0, 0, 0, 0]
-        for x, y, z in self.active:
-            if x < min_max[0]:
-                min_max[0] = x
-            if x > min_max[3]:
-                min_max[3] = x
-            if y < min_max[1]:
-                min_max[1] = y
-            if y > min_max[4]:
-                min_max[4] = y
-            if z < min_max[2]:
-                min_max[2] = z
-            if z > min_max[5]:
-                min_max[5] = z
+    def bounding_box(self):
+        min_max = [[0, 0]] * self.dimensions
+        for pos in self.active:
+            for coord in range(self.dimensions):
+                if pos[coord] < min_max[coord][0]:
+                    min_max[coord][0] = pos[coord]
+                if pos[coord] > min_max[coord][1]:
+                    min_max[coord][1] = pos[coord]
         return min_max
 
     def cycle(self):
-        min_max = self.find_limits()
+        # min_max = self.bounding_box()
         # print('min max:', min_max)
+
+        to_check = set()
+
+        for cube in self.active:
+            to_check.add(cube)
+            for dir in self.dirs:
+                neighbor = []
+                for dim, coord in enumerate(cube):
+                    neighbor.append(coord + dir[dim])
+                to_check.add(tuple(neighbor))
 
         activate = []
         deactivate = []
 
-        for z in range(min_max[2] - 1, min_max[5] + 2):
-            for y in range(min_max[1] - 1, min_max[4] + 2):
-                for x in range(min_max[0] - 1, min_max[3] + 2):
-                    n = self.count_neighbors(x, y, z)
-                    if self.is_active(x, y, z):
-                        if n != 2 and n != 3:
-                            deactivate.append((x, y, z))
-                    else:
-                        if n == 3:
-                            activate.append((x, y, z))
+        for cube in to_check:
+            n = self.count_neighbors(cube)
+            if self.is_active(cube):
+                if n != 2 and n != 3:
+                    deactivate.append(cube)
+            else:
+                if n == 3:
+                    activate.append(cube)
 
-        for p in activate:
-            self.activate(*p)
+        for cube in activate:
+            self.activate(cube)
 
-        for p in deactivate:
-            self.deactivate(*p)
+        for cube in deactivate:
+            self.deactivate(cube)
 
     def count_active(self):
         return len(self.active)
 
-    def count_neighbors(self, x, y, z):
+    def count_neighbors(self, pos):
         count = 0
-        for dx, dy, dz in self.dirs:
-            if self.is_active(x + dx, y + dy, z + dz):
+        for dpos in self.dirs:
+            neighbor = []
+            for dim, coord in enumerate(pos):
+                neighbor.append(coord + dpos[dim])
+            if self.is_active(tuple(neighbor)):
                 count += 1
         return count
 
     def __str__(self):
+        return 'TODO'
         r = []
-        min_max = self.find_limits()
+        min_max = self.bounding_box()
         for z in range(min_max[2], min_max[5] + 1):
             r.append(f'\nz = {z}\n')
             for y in range(min_max[1], min_max[4] + 1):
@@ -107,111 +133,8 @@ class Pocket:
         return ''.join(r)
 
 
-class HyperPocket:
-    def __init__(self, data):
-        self.active = set()
-        self.parse(data)
-        self.dirs = []
-        for w in range(-1, 2):
-            for z in range(-1, 2):
-                for y in range(-1, 2):
-                    for x in range(-1, 2):
-                        if x == 0 and y == 0 and z == 0 and w == 0:
-                            continue
-                        self.dirs.append((x, y, z, w))
-
-    def parse(self, data):
-        z = 0
-        w = 0
-        for y, line in enumerate(data):
-            for x, char in enumerate(line):
-                if char == '#':
-                    self.active.add((x, y, z, w))
-
-    def activate(self, x, y, z, w):
-        self.active.add((x, y, z, w))
-
-    def deactivate(self, x, y, z, w):
-        if (x, y, z, w) in self.active:
-            self.active.remove((x, y, z, w))
-
-    def is_active(self, x, y, z, w):
-        return (x, y, z, w) in self.active
-
-    def find_limits(self):
-        min_max = [0, 0, 0, 0, 0, 0, 0, 0]
-        for x, y, z, w in self.active:
-            if x < min_max[0]:
-                min_max[0] = x
-            if x > min_max[4]:
-                min_max[4] = x
-            if y < min_max[1]:
-                min_max[1] = y
-            if y > min_max[5]:
-                min_max[5] = y
-            if z < min_max[2]:
-                min_max[2] = z
-            if z > min_max[6]:
-                min_max[6] = z
-            if w < min_max[3]:
-                min_max[3] = w
-            if w > min_max[7]:
-                min_max[7] = w
-        return min_max
-
-    def cycle(self):
-        min_max = self.find_limits()
-        # print('min max:', min_max)
-
-        activate = []
-        deactivate = []
-
-        for w in range(min_max[3] - 1, min_max[7] + 2):
-            for z in range(min_max[2] - 1, min_max[6] + 2):
-                for y in range(min_max[1] - 1, min_max[5] + 2):
-                    for x in range(min_max[0] - 1, min_max[4] + 2):
-                        n = self.count_neighbors(x, y, z, w)
-                        if self.is_active(x, y, z, w):
-                            if n != 2 and n != 3:
-                                deactivate.append((x, y, z, w))
-                        else:
-                            if n == 3:
-                                activate.append((x, y, z, w))
-
-        for p in activate:
-            self.activate(*p)
-
-        for p in deactivate:
-            self.deactivate(*p)
-
-    def count_active(self):
-        return len(self.active)
-
-    def count_neighbors(self, x, y, z, w):
-        count = 0
-        for dx, dy, dz, dw in self.dirs:
-            if self.is_active(x + dx, y + dy, z + dz, w + dw):
-                count += 1
-        return count
-
-    def __str__(self):
-        r = []
-        min_max = self.find_limits()
-        for w in range(min_max[3], min_max[7] + 1):
-            for z in range(min_max[2], min_max[6] + 1):
-                r.append(f'\nz = {z}, w = {w}\n')
-                for y in range(min_max[1], min_max[5] + 1):
-                    for x in range(min_max[0], min_max[4] + 1):
-                        if self.is_active(x, y, z, w):
-                            r.append('#')
-                        else:
-                            r.append('.')
-                    r.append('\n')
-        return ''.join(r)
-
-
 def test1(data):
-    p = Pocket(data)
+    p = Pocket(3, data)
     # print(p)
     for c in range(6):
         p.cycle()
@@ -219,7 +142,7 @@ def test1(data):
     return p.count_active()
 
 def test2(data):
-    p = HyperPocket(data)
+    p = Pocket(4, data)
     # print(p)
     for c in range(6):
         p.cycle()
@@ -227,14 +150,14 @@ def test2(data):
     return p.count_active()
 
 def part1(data):
-    p = Pocket(data)
+    p = Pocket(3, data)
     # print(p)
     for c in range(6):
         p.cycle()
     return p.count_active()
 
 def part2(data):
-    p = HyperPocket(data)
+    p = Pocket(4, data)
     # print(p)
     for c in range(6):
         p.cycle()
@@ -248,6 +171,7 @@ if __name__ == '__main__':
 ..#
 ###
 '''.splitlines()
+
     print('Test Part 1:')
     test_eq('Test 1.1', test1, 112, test_input_1)
     print()

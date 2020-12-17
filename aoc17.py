@@ -60,7 +60,7 @@ class Pocket:
 
     def cycle(self):
         min_max = self.find_limits()
-        print('min max:', min_max)
+        # print('min max:', min_max)
 
         activate = []
         deactivate = []
@@ -161,7 +161,7 @@ class HyperPocket:
 
     def cycle(self):
         min_max = self.find_limits()
-        print('min max:', min_max)
+        # print('min max:', min_max)
 
         activate = []
         deactivate = []
@@ -212,7 +212,7 @@ class HyperPocket:
 
 def test1(data):
     p = Pocket(data)
-    print(p)
+    # print(p)
     for c in range(6):
         p.cycle()
         # print(p)
@@ -220,7 +220,7 @@ def test1(data):
 
 def test2(data):
     p = HyperPocket(data)
-    print(p)
+    # print(p)
     for c in range(6):
         p.cycle()
         # print(p)
@@ -228,14 +228,14 @@ def test2(data):
 
 def part1(data):
     p = Pocket(data)
-    print(p)
+    # print(p)
     for c in range(6):
         p.cycle()
     return p.count_active()
 
 def part2(data):
     p = HyperPocket(data)
-    print(p)
+    # print(p)
     for c in range(6):
         p.cycle()
         # print(p)

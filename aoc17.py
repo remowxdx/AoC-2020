@@ -4,7 +4,7 @@ from aoc import *
 
 pd = Debug(True)
 DAY = 17
-SOLVED_1 = False
+SOLVED_1 = True
 SOLVED_2 = False
 
 def get_input(filename):
@@ -12,23 +12,130 @@ def get_input(filename):
         lines = f.read()
     return lines.splitlines()
 
+class Pocket:
+    def __init__(self, data):
+        self.active = set()
+        self.parse(data)
+        self.dirs = []
+        for z in range(-1, 2):
+            for y in range(-1, 2):
+                for x in range(-1, 2):
+                    if x == 0 and y == 0 and z == 0:
+                        continue
+                    self.dirs.append((x, y, z))
+
+    def parse(self, data):
+        z = 0
+        for y, line in enumerate(data):
+            for x, char in enumerate(line):
+                if char == '#':
+                    self.active.add((x, y, z))
+
+    def activate(self, x, y, z):
+        self.active.add((x, y, z))
+
+    def deactivate(self, x, y, z):
+        if (x, y, z) in self.active:
+            self.active.remove((x, y, z))
+
+    def is_active(self, x, y, z):
+        return (x, y, z) in self.active
+
+    def find_limits(self):
+        min_max = [0, 0, 0, 0, 0, 0]
+        for x, y, z in self.active:
+            if x < min_max[0]:
+                min_max[0] = x
+            if x > min_max[3]:
+                min_max[3] = x
+            if y < min_max[1]:
+                min_max[1] = y
+            if y > min_max[4]:
+                min_max[4] = y
+            if z < min_max[2]:
+                min_max[2] = z
+            if z > min_max[5]:
+                min_max[5] = z
+        return min_max
+
+    def cycle(self):
+        min_max = self.find_limits()
+        print('min max:', min_max)
+
+        activate = []
+        deactivate = []
+
+        for z in range(min_max[2] - 1, min_max[5] + 2):
+            for y in range(min_max[1] - 1, min_max[4] + 2):
+                for x in range(min_max[0] - 1, min_max[3] + 2):
+                    n = self.count_neighbors(x, y, z)
+                    if self.is_active(x, y, z):
+                        if n != 2 and n != 3:
+                            deactivate.append((x, y, z))
+                    else:
+                        if n == 3:
+                            activate.append((x, y, z))
+
+        for p in activate:
+            self.activate(*p)
+
+        for p in deactivate:
+            self.deactivate(*p)
+
+    def count_active(self):
+        return len(self.active)
+
+    def count_neighbors(self, x, y, z):
+        count = 0
+        for dx, dy, dz in self.dirs:
+            if self.is_active(x + dx, y + dy, z + dz):
+                count += 1
+        return count
+
+    def __str__(self):
+        r = []
+        min_max = self.find_limits()
+        for z in range(min_max[2], min_max[5] + 1):
+            r.append(f'\nz = {z}\n')
+            for y in range(min_max[1], min_max[4] + 1):
+                for x in range(min_max[0], min_max[3] + 1):
+                    if self.is_active(x, y, z):
+                        r.append('#')
+                    else:
+                        r.append('.')
+                r.append('\n')
+        return ''.join(r)
+
+
 def test1(data):
-    return 0
+    p = Pocket(data)
+    print(p)
+    for c in range(6):
+        p.cycle()
+        # print(p)
+    return p.count_active()
 
 def test2(data):
     return 0
 
 def part1(data):
-    return None
+    p = Pocket(data)
+    print(p)
+    for c in range(6):
+        p.cycle()
+    return p.count_active()
 
 def part2(data):
     return None
 
 if __name__ == '__main__':
 
-    test_input_1 = [1,2,3]
+    test_input_1 = '''.#.
+..#
+###
+'''.splitlines()
     print('Test Part 1:')
-    test_eq('Test 1.1', test1, 42, test_input_1)
+    test_eq('Test 1.1', test1, 112, test_input_1)
     print()
 
     test_input_2 = [4,5,6]

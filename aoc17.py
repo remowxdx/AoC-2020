@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 17
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -107,6 +107,109 @@ class Pocket:
         return ''.join(r)
 
 
+class HyperPocket:
+    def __init__(self, data):
+        self.active = set()
+        self.parse(data)
+        self.dirs = []
+        for w in range(-1, 2):
+            for z in range(-1, 2):
+                for y in range(-1, 2):
+                    for x in range(-1, 2):
+                        if x == 0 and y == 0 and z == 0 and w == 0:
+                            continue
+                        self.dirs.append((x, y, z, w))
+
+    def parse(self, data):
+        z = 0
+        w = 0
+        for y, line in enumerate(data):
+            for x, char in enumerate(line):
+                if char == '#':
+                    self.active.add((x, y, z, w))
+
+    def activate(self, x, y, z, w):
+        self.active.add((x, y, z, w))
+
+    def deactivate(self, x, y, z, w):
+        if (x, y, z, w) in self.active:
+            self.active.remove((x, y, z, w))
+
+    def is_active(self, x, y, z, w):
+        return (x, y, z, w) in self.active
+
+    def find_limits(self):
+        min_max = [0, 0, 0, 0, 0, 0, 0, 0]
+        for x, y, z, w in self.active:
+            if x < min_max[0]:
+                min_max[0] = x
+            if x > min_max[4]:
+                min_max[4] = x
+            if y < min_max[1]:
+                min_max[1] = y
+            if y > min_max[5]:
+                min_max[5] = y
+            if z < min_max[2]:
+                min_max[2] = z
+            if z > min_max[6]:
+                min_max[6] = z
+            if w < min_max[3]:
+                min_max[3] = w
+            if w > min_max[7]:
+                min_max[7] = w
+        return min_max
+
+    def cycle(self):
+        min_max = self.find_limits()
+        print('min max:', min_max)
+
+        activate = []
+        deactivate = []
+
+        for w in range(min_max[3] - 1, min_max[7] + 2):
+            for z in range(min_max[2] - 1, min_max[6] + 2):
+                for y in range(min_max[1] - 1, min_max[5] + 2):
+                    for x in range(min_max[0] - 1, min_max[4] + 2):
+                        n = self.count_neighbors(x, y, z, w)
+                        if self.is_active(x, y, z, w):
+                            if n != 2 and n != 3:
+                                deactivate.append((x, y, z, w))
+                        else:
+                            if n == 3:
+                                activate.append((x, y, z, w))
+
+        for p in activate:
+            self.activate(*p)
+
+        for p in deactivate:
+            self.deactivate(*p)
+
+    def count_active(self):
+        return len(self.active)
+
+    def count_neighbors(self, x, y, z, w):
+        count = 0
+        for dx, dy, dz, dw in self.dirs:
+            if self.is_active(x + dx, y + dy, z + dz, w + dw):
+                count += 1
+        return count
+
+    def __str__(self):
+        r = []
+        min_max = self.find_limits()
+        for w in range(min_max[3], min_max[7] + 1):
+            for z in range(min_max[2], min_max[6] + 1):
+                r.append(f'\nz = {z}, w = {w}\n')
+                for y in range(min_max[1], min_max[5] + 1):
+                    for x in range(min_max[0], min_max[4] + 1):
+                        if self.is_active(x, y, z, w):
+                            r.append('#')
+                        else:
+                            r.append('.')
+                    r.append('\n')
+        return ''.join(r)
+
+
 def test1(data):
     p = Pocket(data)
     print(p)
@@ -116,7 +219,12 @@ def test1(data):
     return p.count_active()
 
 def test2(data):
-    return 0
+    p = HyperPocket(data)
+    print(p)
+    for c in range(6):
+        p.cycle()
+        # print(p)
+    return p.count_active()
 
 def part1(data):
     p = Pocket(data)
@@ -126,7 +234,13 @@ def part1(data):
     return p.count_active()
 
 def part2(data):
-    return None
+    p = HyperPocket(data)
+    print(p)
+    for c in range(6):
+        p.cycle()
+        # print(p)
+    return p.count_active()
+
 
 if __name__ == '__main__':
 
@@ -140,7 +254,7 @@ if __name__ == '__main__':
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 848, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

@@ -573,3 +573,40 @@ That shoud live you with the named field for each numerical field.
 
 Multiply the value of our ticket where the named field starts with 'departure'
 and we are done.
+
+## [Day 17](https://adventofcode.com/2020/day/17)
+
+Today 49 minutes for Part 1 and 9 minutes for Part 2.
+
+Also for today I wrote a `class` for the dimensional `Pocket`:
+it contains a python `set()` that keeps track of the active cubes.
+A cube is a 3-tuple with its own coordinates.
+In the constructor set all cube as inactive, parse the input to activate
+the starting cubes.
+I also generate the difference with the neighbors.
+The `activate()` and `deactivate()` methods are self explanatory and simply
+add resp. remove the tuple from the set of active cubes.
+Similarly the `is_active()` method checks if the coordinates tuple is
+in the set of active cubes.
+The `count_active()` method gives the count of active cubes, that is 
+the size of the set of active cubes.
+`count_neighbors()` count the active neighbors of the given cube, using
+the differences generated in the constructor (`dirs`).
+`find_limits()` returns a list with the minimum and maximum coordinates of the
+active cubes, it is the "bounding box" of the active cubes.
+
+Finally the `cycle()` method does the work: it cycles through all the cubes
+inside the bounding box and 1 further, counting the neighbors and
+putting the coordinates in the `activate` or `deactivate` lists.
+
+At the end cubes in the `activate` list are activated and those in the
+`deactivate` list are deactivated.
+
+To get the result we simply cycle 6 times and count the active cubes.
+
+For Part 2, I copied the `Pocket` class to an `HyperPocket` class
+and "simply" added a fourth `w` coordinate everywhere.
+
+I think we can optimize the algorithm by checking only the neighbors of
+the active cubes, not all the cubes in the bounding box.
+

@@ -64,8 +64,9 @@ def check(message, rule, rules):
             s = r1
         return s
     if rule[0] == 'or':
-        r = check(message, rule[1], rules)
-        r.extend(check(message, rule[2], rules))
+        r = []
+        for i in range(1, len(rule)):
+            r.extend(check(message, rule[i], rules))
         return r
 
 def update_rules(rules):
@@ -85,7 +86,7 @@ def test1(data):
             count += 1
             valid.append(m)
             continue
-    print(valid)
+    # print(valid)
     return count
 
 def test2(data):
@@ -93,32 +94,25 @@ def test2(data):
     update_rules(rules)
     valid = []
     count = 0
-    print(rules)
+    # print(rules)
     for m in messages:
         r = check(m, '0', rules)
         if len(r) == 0:
             continue
-        if len(r) == 1 and r[0] == len(m):
-            count += 1
-            valid.append(m)
-            continue
-        if len(r) == 1 and r[0] < len(m):
-            continue
-        if len(r) > 1:
+        else:
             for l in r:
                 if l == len(m):
                     count += 1
                     valid.append(m)
                     break
             continue
-        print(m)
-        print(r, len(m))
+        # print(m)
+        # print(r, len(m))
         raise ValueError('???')
-    print(valid)
+    # print(valid)
     return count
 
 def part1(data):
-    return None
     rules, messages = parse_input(data)
     valid = []
     count = 0
@@ -128,7 +122,7 @@ def part1(data):
         if len(r) == 1 and r[0] == len(m):
             count += 1
             valid.append(m)
-    print(valid)
+    # print(valid)
     return count
 
 def part2(data):
@@ -136,28 +130,22 @@ def part2(data):
     update_rules(rules)
     valid = []
     count = 0
-    print(rules)
+    # print(rules)
     for m in messages:
         r = check(m, '0', rules)
         if len(r) == 0:
             continue
-        if len(r) == 1 and r[0] == len(m):
-            count += 1
-            valid.append(m)
-            continue
-        if len(r) == 1 and r[0] < len(m):
-            continue
-        if len(r) > 1:
+        else:
             for l in r:
                 if l == len(m):
                     count += 1
                     valid.append(m)
                     break
             continue
-        print(m)
-        print(r, len(m))
+        # print(m)
+        # print(r, len(m))
         raise ValueError('???')
-    print(valid)
+    # print(valid)
     return count
 
 if __name__ == '__main__':

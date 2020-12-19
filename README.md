@@ -574,6 +574,7 @@ That shoud live you with the named field for each numerical field.
 Multiply the value of our ticket where the named field starts with 'departure'
 and we are done.
 
+
 ## [Day 17](https://adventofcode.com/2020/day/17)
 
 Today 49 minutes for Part 1 and 9 minutes for Part 2.
@@ -621,3 +622,129 @@ bounding box (hopefully), but only through the neighbors of the active
 cubes. And the active cubes themselves.
 
 Still missing is the `__str()__` protocol.
+
+
+## [Day 18](https://adventofcode.com/2020/day/18)
+
+1 hour and 15 minutes and I don't know how much for Part2... I fell asleep
+while doing Part 2!
+
+It took me some time to realize how should the `evaluate` work. I
+came many times near the right solution, always missing it.
+
+At the end it works mostly like a calculator.
+It reads the next character, keeps track of the last inserted number
+(`prev_value`) and as it encounters an operation, it evaluates it as
+soon as it has the next value.
+
+But if there is an "`(`", we save the current `value` in a stack, evaluate to
+the matching "`)`", pop the previous value from the stack and evaluate
+the operation.
+
+For Part 2, it's similar, but more complicated: we evaluate only the `+`
+opreation, because the `*` operation and value are pushed on the stack and
+will be evaluated only at the end (of the `line` or of the "`)`").
+That is to respect the precedence.
+
+And now the stack is really a stack of stack, with every stack containing a
+stack for the values for the `*` operations to do at the end, instead of 
+having only the value computed so far.
+
+
+## [Day 19](https://adventofcode.com/2020/day/19)
+
+Another long puzzle: 1 hour and 45 minutes for Part 1, and 25 minutes for
+Part 2.
+
+This was another parsing/evaluating puzzle, like the previous.
+I already said that I have to find another way to parse the input:
+maybe it has been done to help me! ;)
+
+Part 1 took much time, because I suspect that
+I implented the *significantly more difficult* way warned in Part 2.
+
+Anyway, I parsed the `rules` in a `dict`, every rule is:
+
+- the name of (another) rule
+- a tuple that has as first member the type of the rule (`char`, `and`, `or`)
+followed by:
+  - a character ("`a`" or "`b`" if type is `char`) or
+  - one or more subrules, e. g.  `('or', '42', ('and', '42', '8'))`
+
+`and` rules are those that must be all matched in sequence, `or` rule are
+those that at least one has to match.
+
+Then there is the `check()` function that does the checking:
+it takes the `message`, the `rule` to be matched and the set of `rules`.
+It returns a list that says how many character have been matched.
+E. g. if it returns `[3, 5]`, it means that under some `or` rules 3 characters of
+the message are matched instead under some other `or` rule 5 character are matched.
+
+If it doesn't match returns the empty list (`[]`).
+
+```
+def check(message, rule, rules):
+    # Check if we are still in the message
+    if len(message) == 0:
+        return []
+        
+    # If rule is not a tuple, it is a rule name:
+    # Check that named rule!
+    if type(rule) != tuple:
+        return check(message, rules[rule], rules)
+
+    # print('Check', message, rule) # Debugging
+
+    # If rule is a character, check if it correspond with what
+    # is in the message. If ok return that we have matched one character
+    if rule[0] == 'char':
+        if message[0] == rule[1]:
+            return [1]
+        # Character doesn't match
+        return []
+
+    # We must match all the rules in sequence:
+    if rule[0] == 'and':
+        s = []  # This will be the return list
+        # Check if first rule matches
+        r1 = check(message, rule[1], rules)
+
+        # Build a sub rule for the rest of the sequence
+        if len(rule) > 2:
+            subrule = ('and', *list(rule[2:]))
+            # print(subrule)  # Debugging !
+
+            # This was the hardest part to figure out!
+            # For every matched length of the first rule, add every
+            # matched length of the remaining rule of the sequence
+            for l1 in r1:
+                # Check if the sub rule matches
+                rn = check(message[l1:], subrule, rules)
+                # For all l1 add every ln
+                for ln in rn:
+                    s.append(l1 + ln)
+        else:
+        # The sequence has only one case (i. e. is not a sequence)
+            s = r1
+        return s
+
+    # We must match at least one rule in the list:
+    if rule[0] == 'or':
+        r = []
+        # For every rule in the list...
+        for i in range(1, len(rule)):
+            # ... simply add all the matched length to the result
+            r.extend(check(message, rule[i], rules))
+        return r
+
+```
+
+With this done, Part 2 is easy: just `update_rules()` as said
+and `count` the valid messages.
+
+I have had also some problems at the end, because for Part 2
+we can have that the message matches multiple lenghts.
+We must accept the result if at least one of the matched length
+is equal to the length of the message.
+
+

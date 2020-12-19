@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 18
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -42,44 +42,59 @@ def evaluate(line):
         # print(stack, ops, prev_value, value)
     return value
 
-
-def evaluate_w(line):
+def evaluate_2(line):
     stack = [[]]
     cur_stack = 0
-    ops = []
     for c in line:
         if c == ' ':
             continue
         elif c.isdigit():
             stack[cur_stack].append(int(c))
         elif c == '+' or c == '*':
-            ops.append(c)
+            stack[cur_stack].append(c)
         elif c == '(':
             stack.append([])
             cur_stack += 1
         elif c == ')':
-            v = stack[cur_stack].pop()
+            while len(stack[cur_stack]) > 1:
+                op = stack[cur_stack][-2]
+                if op == '*':
+                    right = stack[cur_stack].pop()
+                    op = stack[cur_stack].pop()
+                    left = stack[cur_stack].pop()
+                    stack[cur_stack].append(left * right)
+                else:
+                    raise ValueError('???')
+            value = stack[cur_stack].pop()
             stack.pop()
             cur_stack -= 1
-            stack[cur_stack].append(v)
+            stack[cur_stack].append(value)
 
-        if len(ops) > 0 and len(stack[cur_stack]) > 1:
-            right = stack[cur_stack].pop()
-            left = stack[cur_stack].pop()
-            op = ops.pop()
+        if len(stack[cur_stack]) > 2:
+            op = stack[cur_stack][-2]
             if op == '+':
+                right = stack[cur_stack].pop()
+                op = stack[cur_stack].pop()
+                left = stack[cur_stack].pop()
                 stack[cur_stack].append(left + right)
-            if op == '*':
-                stack[cur_stack].append(left * right)
-        # print(stack, ops)
-    return stack[0][0]
+        # print(stack)
+    while len(stack[cur_stack]) > 1:
+        op = stack[cur_stack][-2]
+        if op == '*':
+            right = stack[cur_stack].pop()
+            op = stack[cur_stack].pop()
+            left = stack[cur_stack].pop()
+            stack[cur_stack].append(left * right)
+        else:
+            raise ValueError('???')
+    return stack[0].pop()
 
 
 def test1(data):
     return evaluate(data)
 
 def test2(data):
-    return 0
+    return evaluate_2(data)
 
 def part1(data):
     s = 0
@@ -88,7 +103,10 @@ def part1(data):
     return s
 
 def part2(data):
-    return None
+    s = 0
+    for line in data:
+        s += evaluate_2(line)
+    return s
 
 if __name__ == '__main__':
 
@@ -107,9 +125,13 @@ if __name__ == '__main__':
     test_eq('Test 1.6', test1, 13632, test_input_6)
     print()
 
-    test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 231, test_input_1)
+    test_eq('Test 2.2', test2, 51, test_input_2)
+    test_eq('Test 2.3', test2, 46, test_input_3)
+    test_eq('Test 2.4', test2, 1445, test_input_4)
+    test_eq('Test 2.5', test2, 669060, test_input_5)
+    test_eq('Test 2.6', test2, 23340, test_input_6)
     print()
 
     data = get_input(f'input{DAY}')

@@ -25,7 +25,7 @@ def pixels_to_num(pixels):
         rnum = (rnum >> 1) + start * bit
     # Return only one of the to possibilities
     # print(num, rnum)
-    return min(num , rnum)
+    return num , rnum
         
 
 def get_tiles(data):
@@ -34,7 +34,7 @@ def get_tiles(data):
     for line in data:
         if line.startswith('Tile'):
             tile_num = int(line[5:-1])
-            tiles[tile_num] = []
+            tiles[tile_num] = {'raw': [], 'img': []}
             continue
         if line == '':
             continue
@@ -49,7 +49,8 @@ def get_borders(tiles):
         bottom = pixels_to_num(tiles[tile][-1])
         left = pixels_to_num([line[0] for line in tiles[tile]])
         right = pixels_to_num([line[-1] for line in tiles[tile]])
-        for b in [top, left, bottom, right]:
+        for bd in [top, left, bottom, right]:
+            b = min(bd)
             if b not in borders:
                 borders[b] = []
             borders[b].append(tile)

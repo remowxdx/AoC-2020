@@ -12,7 +12,7 @@ added together give the result of *2020*.
 For the first solution I simply ran two (or three) nested loops over the data
 and checked if the result was 2020.
 
-```
+```py
 for first in data:
     for second in data:
         if first + second == 2020:
@@ -37,7 +37,7 @@ If also the target is zero you are OK. If not the previous steps weren't
 good.
 
 
-```
+```py
 def find_sum_eq(data, target, num):
     if num == 0:
 # We are at the end of our search... if also target is 0
@@ -61,7 +61,7 @@ def find_sum_eq(data, target, num):
 
 To speed up thing we could test only data after the current n.
 
-```
+```py
 for index, n in enumerate(data):
     r = find_sum_eq(data[index:], target - n, num - 1)
 ```
@@ -162,7 +162,7 @@ means `0` and "R" means `1`.
 So the problem is *really easy* to solve: just transform the binary
 number in base 10 and you have your seat ID.
 
-```
+```py
 # Gives the seat ID, given the code on the boarding pass
 def seat_ID(code):
     id = 0
@@ -184,7 +184,7 @@ Then I saw that in the middle of the seat list, there was only one free
 seat, so I followed the array to find the first occupied seat and
 then to the first with a free seat.
 
-```
+```py
 started = False  # In the front of the plane all seats are free
 for id, seat in enumerate(s):
     if started == False and seat == True:
@@ -427,7 +427,7 @@ of the given lines. Then just `combine()` this line with the next.
 The simple (and wrong) `combine()` version is this:
 
 
-```
+```py
 def combine(l1, l2):
     b1, d1 = l1
     b2, d2 = l2
@@ -452,7 +452,7 @@ I have to find the **right** way to do it.
 
 Ok this is the (more) correct way to do it:
 
-```
+```py
 def combine(l1, l2):
     # Here is the bus line data
     b1, o1 = l1
@@ -682,7 +682,7 @@ the message are matched instead under some other `or` rule 5 character are match
 
 If it doesn't match returns the empty list (`[]`).
 
-```
+```py
 def check(message, rule, rules):
     # Check if we are still in the message
     if len(message) == 0:
@@ -748,3 +748,49 @@ We must accept the result if at least one of the matched length
 is equal to the length of the message.
 
 
+## [Day 20](https://adventofcode.com/2020/day/20)
+
+Well, another hard puzzle, at least for me.
+54 minutes for Part 1, and at least 2 hours and a half for Part 2.
+I think this was the longest program to solve a puzzle.
+
+The idea here is to build a dict of the tiles (`get_tiles()`), indexed by the tile number.
+Every tile has a `raw` image corresponding to the input and an `img` image
+without the borders (for Part 2).
+
+Then we build (`get_borders()`) another dict, indexed by the `minimum` of a tuple
+with the border transformed to two numbers, by treating it as a binary
+digit, with "`#`" meaning `1` and "`.`" meaning 0, and the corresponding
+flipped number (implemented in `pixels_to_num()`).
+While computing the borders, we add to the corresponding tile the `top`,
+`left`, `bottom` and `right` borders.
+
+In Part 1 I *"simply"* find which tiles are at the border of the whole
+image, by checking to how many tiles each tile border matches.
+If it is only one, we are on the image border. Then to find the
+corner, we find the tiles that have two external borders.
+
+For Part 2 much of the work went into implementing functions to
+rotate and flip tiles, by rotating and flipping images (`img`) and borders.
+Also be aware that when we rotate or flip borders, some of the tuples that
+represent the borders have to be swapped.
+
+Also much work went in the `build_image()` function, that analyses the tiles
+and stitches them togheter, by rotating and flipping them as needed:
+
+1. The process starts from a corner tile, we find the tile with a border 
+corresponding to the corner right border.
+2. By rotating the new tile, we move that border on the left.
+3. If the border are not in the same direction, we flip the tile vertically
+4. We add the tile to the image. And continue to the next tile in the row.
+5. At the end of the row, we start a new row by finding a tile with a border that
+correspond to the bottom border of the first tile of the previous row.
+6. Again by rotating and flipping, we move that border on the top and add the tile
+to the image.
+7. We continue to the end of the image.
+
+Then we check for monster in the image. We analyse every pixel of the image
+to see if it correspond to the monster. If not we rotate/flip the image,
+until we find some monster.
+
+Finally we count the "`#`" in the image.

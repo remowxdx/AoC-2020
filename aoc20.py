@@ -38,7 +38,7 @@ def get_tiles(data):
             continue
         if line == '':
             continue
-        tiles[tile_num].append(line)
+        tiles[tile_num]['raw'].append(line)
     return tiles
 
 

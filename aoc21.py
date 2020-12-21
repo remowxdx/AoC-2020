@@ -81,15 +81,15 @@ def test1(data):
     ingredients, allergens, foods = parse(data)
     eliminate_non_allergic(ingredients, allergens, foods)
     r = eliminate_duplicates(allergens)
-    print('-' * 20)
-    for i in r:
-        print(i, r[i])
+    # print('-' * 20)
+    # for i in r:
+        # print(i, r[i])
 
     s = 0
     for i in ingredients:
         if i not in r:
             s += count_ingredient_in_foods(i, foods)
-            print(i)
+            # print(i)
     return s
 
 def test2(data):

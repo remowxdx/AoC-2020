@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 21
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -28,10 +28,10 @@ def parse(data):
                 allergens[a].add(i)
         foods.append([[i for i in ingr.split(' ')], [a for a in allerg[:-1].split(', ')], []])
 
-    print()
-    print(ingredients)
-    print(allergens)
-    print(foods)
+    # print()
+    # print(ingredients)
+    # print(allergens)
+    # print(foods)
     return ingredients, allergens, foods
 
 def eliminate_non_allergic(ingredients, allergens, foods):
@@ -44,8 +44,8 @@ def eliminate_non_allergic(ingredients, allergens, foods):
                 if inv_food in allergens[a]:
                     allergens[a].remove(inv_food)
 
-    for a in allergens:
-        print(a, allergens[a])
+    # for a in allergens:
+        # print(a, allergens[a])
 
 def eliminate_duplicates(allergens):
     definitive = {}
@@ -73,6 +73,9 @@ def count_ingredient_in_foods(ingredient, foods):
             s += 1
     return s
 
+def canonical_dangerous_ingredient_list(allergens):
+    i_a = dict([(allergens[a], a) for a in allergens])
+    return ','.join([i_a[k] for k in sorted(i_a)])
 
 def test1(data):
     ingredients, allergens, foods = parse(data)
@@ -90,25 +93,27 @@ def test1(data):
     return s
 
 def test2(data):
-    return 0
+    ingredients, allergens, foods = parse(data)
+    eliminate_non_allergic(ingredients, allergens, foods)
+    r = eliminate_duplicates(allergens)
+    return canonical_dangerous_ingredient_list(r)
 
 def part1(data):
     ingredients, allergens, foods = parse(data)
     eliminate_non_allergic(ingredients, allergens, foods)
     r = eliminate_duplicates(allergens)
-    print('-' * 20)
-    for i in r:
-        print(i, r[i])
 
     s = 0
     for i in ingredients:
         if i not in r:
             s += count_ingredient_in_foods(i, foods)
-            print(i)
     return s
 
 def part2(data):
-    return None
+    ingredients, allergens, foods = parse(data)
+    eliminate_non_allergic(ingredients, allergens, foods)
+    r = eliminate_duplicates(allergens)
+    return canonical_dangerous_ingredient_list(r)
 
 if __name__ == '__main__':
 
@@ -123,7 +128,7 @@ sqjhc mxmxvkd sbzzf (contains fish)
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 'mxmxvkd,sqjhc,fvjkl', test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

@@ -794,3 +794,39 @@ to see if it correspond to the monster. If not we rotate/flip the image,
 until we find some monster.
 
 Finally we count the "`#`" in the image.
+
+
+## [Day 21](https://adventofcode.com/2020/day/21)
+
+Today 1 hour and 12 minutes for Part 1 and 12 minutes for Part 2.
+
+At the beginning I struggled to understand the description of the puzzle:
+I couldn't make up my mind around the problem.
+Then I "clicked"... I saw what was meant and how to solve the problem.
+
+The trick is to find for each food which ingredients aren't contained.
+Those ingrdients can not possibly contain the food's allergens.
+
+While parsing the puzzle input, I built the list of ingredients, the list
+of allergens the list of food with the ingredients and the allergens that
+it contains.
+
+Then we go food for food and add the list of ingredients that it
+doesn't contains.
+With that list, we remove from the allergens of the food, the ingredients
+that are not in that food.
+
+It's not easy to understand (for me) and it's harder to explain...
+
+Then we search the allergens list for allergen that can be
+in only one ingredients, remove that ingredient from the other allergens
+and save it in the `definitive` dict.
+
+From there we go through the list of ingredients, and if are not
+in the allergens list, we count how many times they come up
+in the food list.
+
+For Part 2, we sort the "inverted" dict (dict with keys and values swapped),
+and join the ingredients.
+
+

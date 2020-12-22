@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 22
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -36,9 +36,54 @@ def play_round(decks):
 
     if c1 > c2:
         decks[0].extend([c1, c2])
+        return 0
     if c2 > c1:
         decks[1].extend([c2, c1])
+        return 1
+
+games = []
+
+def play_recursive(decks, depth):
+    # print(decks)
+
+    c1 = decks[0][0]
+    decks[0] = decks[0][1:]
+    c2 = decks[1][0]
+    decks[1] = decks[1][1:]
+
+    # print('Cards:', c1, c2)
+
+    if len(decks[0]) >= c1 and len(decks[1]) >= c2:
+        winner = play_game([decks[0][:c1], decks[1][:c2]], depth + 1)
+    elif c1 > c2:
+        winner = 0
+    elif c2 > c1:
+        winner = 1
+
+    # print('-' * depth, 'Winner is', winner + 1)
     
+    if winner == 0:
+        decks[0].extend([c1, c2])
+    elif winner == 1:
+        decks[1].extend([c2, c1])
+
+
+def play_game(decks, depth):
+    games = []
+    while True:
+        if decks in games:
+            print(decks)
+            # print(games)
+            print('Infinite!')
+            return 0
+        games.append(decks[:])
+        if len(decks[0]) == 0:
+            return 1
+        if len(decks[1]) == 0:
+            return 0
+        play_recursive(decks, depth)
+
+
 def evaluate_deck(deck):
     s = 0
     l = len(deck)
@@ -58,6 +103,14 @@ def test1(data):
     return 0
 
 def test2(data):
+    decks = build_decks(data)
+    while True:
+        play_recursive(decks, 1)
+        if len(decks[0]) == 0:
+            return evaluate_deck(decks[1])
+        if len(decks[1]) == 0:
+            return evaluate_deck(decks[0])
+
     return 0
 
 def part1(data):
@@ -70,10 +123,18 @@ def part1(data):
         play_round(decks)
 
     return 0
-    return None
 
 def part2(data):
-    return None
+    # 33221 < r < 33664
+    decks = build_decks(data)
+    while True:
+        play_recursive(decks, 1)
+        if len(decks[0]) == 0:
+            return evaluate_deck(decks[1])
+        if len(decks[1]) == 0:
+            return evaluate_deck(decks[0])
+
+    return 0
 
 if __name__ == '__main__':
 
@@ -97,7 +158,7 @@ Player 2:
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 291, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

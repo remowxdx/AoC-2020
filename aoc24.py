@@ -5,7 +5,7 @@ from aoc import *
 pd = Debug(True)
 DAY = 24
 SOLVED_1 = True
-SOLVED_2 = False
+SOLVED_2 = True
 
 def get_input(filename):
     with open(filename, 'r') as f:
@@ -42,34 +42,76 @@ def coords(tile):
             raise ValueError('Unknown state')
     return e, n
 
+def flip(tiles, tile):
+    if tile in tiles:
+        tiles.remove(tile)
+    else:
+        tiles.add(tile)
+
+
+def day(tiles):
+    to_flip = set()
+    white_tiles = set()
+    for tile in tiles:
+        count_black = 0
+        x, y = tile
+        for neighbor in [(x + 2, y), (x + 1, y + 1), (x - 1, y + 1), (x - 2, y), (x - 1, y - 1), (x + 1, y - 1)]:
+            if neighbor in tiles:
+                count_black += 1
+            else:
+                if neighbor not in white_tiles:
+                    white_tiles.add(neighbor)
+        if count_black == 0 or count_black > 2:
+            to_flip.add(tile)
+
+    for tile in white_tiles:
+        count_black = 0
+        x, y = tile
+        for neighbor in [(x + 2, y), (x + 1, y + 1), (x - 1, y + 1), (x - 2, y), (x - 1, y - 1), (x + 1, y - 1)]:
+            if neighbor in tiles:
+                count_black += 1
+        if count_black == 2:
+            to_flip.add(tile)
+
+    for tile in to_flip:
+        flip(tiles, tile)
 
 def test1(data):
-    tiles = []
+    tiles = set()
     for line in data:
         c = coords(line)
-        if c in tiles:
-            tiles.remove(c)
-        else:
-            tiles.append(c)
+        flip(tiles, c)
     return len(tiles)
 
 
 def test2(data):
-    return 0
-
-def part1(data):
-    tiles = []
+    tiles = set()
     for line in data:
         c = coords(line)
-        if c in tiles:
-            tiles.remove(c)
-        else:
-            tiles.append(c)
+        flip(tiles, c)
+    for d in range(100):
+        day(tiles)
+        print(d, len(tiles))
+    return len(tiles)
+
+def part1(data):
+    tiles = set()
+    for line in data:
+        c = coords(line)
+        flip(tiles, c)
     return len(tiles)
 
 
 def part2(data):
-    return None
+    tiles = set()
+    for line in data:
+        c = coords(line)
+        flip(tiles, c)
+    for d in range(100):
+        day(tiles)
+        print(d, len(tiles))
+    return len(tiles)
+
 
 if __name__ == '__main__':
 
@@ -100,7 +142,7 @@ wseweeenwnesenwwwswnew
 
     test_input_2 = [4,5,6]
     print('Test Part 2:')
-    test_eq('Test 2.1', test2, 42, test_input_2)
+    test_eq('Test 2.1', test2, 2208, test_input_1)
     print()
 
     data = get_input(f'input{DAY}')

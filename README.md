@@ -805,14 +805,14 @@ I couldn't make up my mind around the problem.
 Then I "clicked"... I saw what was meant and how to solve the problem.
 
 The trick is to find for each food which ingredients aren't contained.
-Those ingrdients can not possibly contain the food's allergens.
+Those ingredients can not possibly contain the food's allergens.
 
 While parsing the puzzle input, I built the list of ingredients, the list
 of allergens the list of food with the ingredients and the allergens that
 it contains.
 
 Then we go food for food and add the list of ingredients that it
-doesn't contains.
+doesn't contain.
 With that list, we remove from the allergens of the food, the ingredients
 that are not in that food.
 
@@ -822,11 +822,89 @@ Then we search the allergens list for allergen that can be
 in only one ingredients, remove that ingredient from the other allergens
 and save it in the `definitive` dict.
 
-From there we go through the list of ingredients, and if are not
+From there we go through the list of ingredients, and if they are not
 in the allergens list, we count how many times they come up
 in the food list.
 
 For Part 2, we sort the "inverted" dict (dict with keys and values swapped),
 and join the ingredients.
+
+
+## [Day 22](https://adventofcode.com/2020/day/22)
+
+It took me 20 minutes for Part 1 and, 2 hours and 20 minutes for
+Part 2, dinner included.
+
+Here I *simply* (I really like this word!) simulated the game
+using a list of two list to simulate my and the crab's deck.
+Part 1 is straightforward, but Part 2 gave me some headache:
+I didn't understand what game meant in relation with the first
+rule of *Recursive Combat*.
+I included sub games in the main game: all the decks combinations
+went into the same
+history, so that meant that if two different sub games
+had the same card configuration, it counted as already played
+and made player 1 the winner.
+
+But the right way was to have the decks history only matter
+for the current playing sub game.
+
+Once understood that, the solution was found.
+
+
+## [Day 23](https://adventofcode.com/2020/day/23)
+
+51 minutes for Part 1 and, well... ehm... 2 hours and something
+for Part 2.
+
+I solved Part 1 with the `Cup` and `Cups` classes, I implemented
+a beautiful linked list in python, with that fantastic
+circular disposition. And it worked great!
+
+But then Part 2... the linked list is *somewhat* inefficient:
+to find the `current - 1` cup, it had to search through the
+whole *one million* long circular linked list of cups, and
+it would have taken 39 day to get to the solution.
+
+So after spending too much time to try to find a way to
+predict the positions of the cups without simulating all
+of the steps, I finally implemented it with a dict, which has
+the cup values as keys and the next cup as value.
+
+The algorithm is the same, but finding the `current - 1` cup
+is way faster.
+
+
+## [Day 24](https://adventofcode.com/2020/day/24)
+
+Today 28 minutes for Part 1 and 23 for Part 2.
+
+This puzzle has gone almost painless, only at the start I had to 
+think a little on the way to follow.
+
+And the way is this: we simply compute for every tile the coordinates of the center,
+looking at the tiles, we see that they are organized in rows that are
+alternating, i. e. the center of a tile
+of a row is aligned with the border of the tiles of the rows above and below.
+
+The `x` (or `e`) is increased by `2` while going `e` and increased by `1`
+while going `ne` or `se`, and decreased accordingly for the west-directions.
+
+The `y` (or `n`) is increased by `1` while going `ne` or `nw` and
+decreased by `1` while going `se` or `sw`.
+
+In reality the tiles are a little vertically stretched, because the
+(euclidean) `y` should be &#8730;3.
+
+Flipping means adding or removing the tile from the set of black `tiles`.
+
+For Part 2, for every day we go through the set of black `tiles`, counting
+the black neighbors and adding the neighboring white tiles to the set of
+white tiles. If the flipping rules apply, we add the tile to the tiles to flip.
+
+Then we go through the white tiles set, basically doing the same as above:
+counting the black neighbors and adding to tiles to flip if the rules apply.
+
+Finally we effectively flip the tiles that have to be flipped.
 
 

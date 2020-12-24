@@ -74,7 +74,7 @@ def play_game(decks, depth):
         if decks in games:
             print(decks)
             # print(games)
-            print('Infinite!')
+            # print('Infinite!')
             return 0
         games.append(decks[:])
         if len(decks[0]) == 0:
@@ -125,7 +125,6 @@ def part1(data):
     return 0
 
 def part2(data):
-    # 33221 < r < 33664
     decks = build_decks(data)
     while True:
         play_recursive(decks, 1)

@@ -91,7 +91,7 @@ def test2(data):
         flip(tiles, c)
     for d in range(100):
         day(tiles)
-        print(d, len(tiles))
+        # print(d, len(tiles))
     return len(tiles)
 
 def part1(data):
@@ -109,7 +109,7 @@ def part2(data):
         flip(tiles, c)
     for d in range(100):
         day(tiles)
-        print(d, len(tiles))
+        # print(d, len(tiles))
     return len(tiles)
 
 

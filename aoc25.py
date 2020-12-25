@@ -19,7 +19,7 @@ def loop_size(subject_number, mod, pk):
     while value != pk:
         value = (value * subject_number) % mod
         ls += 1
-    print(ls)
+    print(f'Loop size of {pk}: {ls}')
     return ls
 
 def encryption_key(subject_number, loop_size, mod):
@@ -36,7 +36,7 @@ def test1(data):
     card_pk = int(data[0])
     door_pk = int(data[1])
     card_ls = loop_size(subject_number, mod, card_pk)
-    # card_ls = loop_size(subject_number, mod, card_pk)
+    # door_ls = loop_size(subject_number, mod, door_pk)
     r = encryption_key(door_pk, card_ls, mod)
     return r
 
@@ -49,7 +49,7 @@ def part1(data):
     card_pk = int(data[0])
     door_pk = int(data[1])
     card_ls = loop_size(subject_number, mod, card_pk)
-    # card_ls = loop_size(subject_number, mod, card_pk)
+    # door_ls = loop_size(subject_number, mod, door_pk)
     r = encryption_key(door_pk, card_ls, mod)
     return r
 

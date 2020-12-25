@@ -908,3 +908,14 @@ counting the black neighbors and adding to tiles to flip if the rules apply.
 Finally we effectively flip the tiles that have to be flipped.
 
 
+## [Day 24](https://adventofcode.com/2020/day/24)
+
+And the last Day, 19 minutes!
+
+Here the puzzle explains it all, we only have to loop the encryption
+step, until we find the public key. Once found, you encrypt the
+other device's public key and we are done.
+
+Merry Christmas!
+
+
